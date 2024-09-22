@@ -1,0 +1,77 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wp-memory-usage\n"
+"POT-Creation-Date: 2022-01-08 23:39+0100\n"
+"PO-Revision-Date: 2022-01-08 23:40+0100\n"
+"Last-Translator: \n"
+"Language-Team: BKux\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: readme.txt\n"
+"X-Poedit-SearchPath-1: wp-memory-usage.php\n"
+
+#: wp-memory-usage.php:115
+msgid "PHP Version"
+msgstr "PHP Version"
+
+#: wp-memory-usage.php:116
+msgid "Bit OS"
+msgstr "Bit OS"
+
+#: wp-memory-usage.php:119
+msgid "sec"
+msgstr "Sek"
+
+#: wp-memory-usage.php:120
+msgid "Max execution time: "
+msgstr "Max Ausführungszeit: "
+
+#: wp-memory-usage.php:125
+msgid "Memory limits"
+msgstr "Speicherlimit"
+
+#: wp-memory-usage.php:128
+msgid "Wordpress"
+msgstr "Wordpress"
+
+#: wp-memory-usage.php:134
+msgid "PHP "
+msgstr ""
+
+#: wp-memory-usage.php:138
+msgid "Memory usage"
+msgstr "Speichernutzung"
+
+#: wp-memory-usage.php:156
+msgid "Memory Overview"
+msgstr "Speicherüberblick"
+
+#: wp-memory-usage.php:156
+msgid "Servertime"
+msgstr "Serverzeit"
+
+#: wp-memory-usage.php:186
+msgid "WP Memory Limit:"
+msgstr "WP Speicherlimit:"
+
+#: wp-memory-usage.php:186 wp-memory-usage.php:187
+msgid "of"
+msgstr "von"
+
+#: wp-memory-usage.php:187
+msgid "PHP Memory Limit:"
+msgstr "PHP Speicherlimit:"
+
+#: wp-memory-usage.php:188
+msgid "IP-Address"
+msgstr "IP-Adresse"
+
+#: wp-memory-usage.php:189
+msgid "PHP"
+msgstr "PHP"
