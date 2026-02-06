@@ -2,13 +2,13 @@
 
 if ( !defined( 'WP_UNINSTALL_PLUGIN' ) ) exit();
 
-UNINSTALL_wpmemoryusage();
+wp_memory_usage_UNINSTALL();
 
-function UNINSTALL_wpmemoryusage() {
-    UNINSTALL_wpmemoryusage_options();
+function wp_memory_usage_UNINSTALL() {
+    wp_memory_usage_UNINSTALL_options();
 }
 
-function UNINSTALL_wpmemoryusage_options() {
+function wp_memory_usage_UNINSTALL_options() {
 	delete_option( "wpmemoryusage_emopt" );
 	delete_option( "wpmemoryusage_settings" );
 }

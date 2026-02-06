@@ -4,7 +4,7 @@ Plugin Name: WP-Memory-Usage
 Plugin URI: https://www.json-content-importer.com
 Description: Show up memory limits, current memory usage, IP-Address, PHP-Version in the dashboard and admin footer
 Author: Bernhard Kux
-Version: 1.2.10
+Version: 1.2.11
 Author URI: https://www.json-content-importer.com
 Text Domain: wp-memory-usage
 Domain Path: /languages/
@@ -23,18 +23,8 @@ defined('ABSPATH') OR exit;
 
 if ( is_admin() ) {	
 
-	define( 'WPMEMORYUSAGEVERSION', '1.2.10' ); // current version number
+	define( 'WPMEMORYUSAGEVERSION', '1.2.11' ); // current version number
 	
-	function wp_memory_usage_i18n_init() {
-		$pd = dirname(
-			plugin_basename(__FILE__)
-		).'/languages/';
-		
-		$id = "wp-memory-usage";
-		$loaderrorlevel = load_plugin_textdomain($id, false, $pd);
-	}
-	add_action('plugins_loaded', 'wp_memory_usage_i18n_init');
-
 	class wp_memory_usage {
 		private $ipadr = "";
 		private $servername = "";
@@ -49,7 +39,24 @@ if ( is_admin() ) {
 			}
 			add_filter( 'admin_footer_text', array (&$this, 'add_footer') );
 		}
-        
+		
+		private function getinput($fieldkey, $default="") {
+			#var_Dump($_GET);
+			if (
+				! isset($_GET['_wpnonce']) ||
+				! wp_verify_nonce( sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'memusage' )
+			) {
+				#echo "NONCE FAILED for GET $fieldkey<hr>";
+				return ""; #wp_die('Ungültiger Nonce – Sicherheitsüberprüfung fehlgeschlagen.');
+			}
+			#echo "NONCE OK for GET $fieldkey<hr>";
+			return sanitize_text_field(wp_unslash(($_GET[$fieldkey] ?? $default)));
+		}
+		
+		private function getserverinput($fieldkey, $default="") {
+			return sanitize_text_field(wp_unslash(($_SERVER[$fieldkey] ?? $default)));
+		}
+		
         public function check_limit() {
 			$this->memory['phplimit'] = "";
 			$this->memory['phplimitunity'] = 'MB';
@@ -145,17 +152,28 @@ if ( is_admin() ) {
 						<?PHP
 							echo '<strong>'.esc_html(__('Multiple Memory Measurement: Reload page and measure memory', 'wp-memory-usage')).'</strong><br>';
 							echo esc_html(__('You might switch off some plugins to check, which plugin consumes significant memory.', 'wp-memory-usage'))."<br>";
-							$cst = $_GET["c"] ?? '';
+							
+							$cst = $this->getinput("c", "");
+							#$cst = $_GET["c"] ?? '';
 							$cst = htmlspecialchars($cst);
-							$ac = $_GET["ac"] ?? '';
-							$ac = htmlspecialchars($ac);
+							
+							$ac = $this->getinput("ac", "");
+							#$ac = $_GET["ac"] ?? '';
+							#$ac = htmlspecialchars($ac);
 
 							$wpmemoryusage_settings_str = get_option('wpmemoryusage_settings') ?? '';
 							$wpmemoryusage_settings = json_decode($wpmemoryusage_settings_str, TRUE);
 
-							$nonceCheck = wp_verify_nonce( ($_REQUEST['memusage'] ?? ''), "memusage" );
+							$nonceCheck = TRUE;
+							if (
+								! isset($_GET['_wpnonce']) ||
+								! wp_verify_nonce( sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'memusage' )
+							) {
+								$nonceCheck = FALSE;
+							}
 							if ($nonceCheck || is_null($wpmemoryusage_settings)) {
-								$nomeas = $_GET["nomeas"] ?? '';
+								$nomeas = $this->getinput("nomeas", "");
+								#$nomeas = $_GET["nomeas"] ?? '';
 								$validatedValue_nomeas = filter_input(INPUT_GET, 'nomeas', FILTER_VALIDATE_INT);
 								if ($validatedValue_nomeas && $nomeas>0) { 
 									$wpmemoryusage_settings["nomeas"] = $nomeas; 
@@ -166,7 +184,8 @@ if ( is_admin() ) {
 									$wpmemoryusage_settings["nomeas"] = 2000;
 								}
 
-								$secrel = $_GET["secrel"] ?? '';
+								$secrel = $this->getinput("secrel", "");
+								#$secrel = $_GET["secrel"] ?? '';
 								$validatedValue_secrel = filter_input(INPUT_GET, 'secrel', FILTER_VALIDATE_INT);
 								if ($validatedValue_secrel && $secrel>0) { 
 									$wpmemoryusage_settings["secrel"] = $secrel; 
@@ -177,7 +196,7 @@ if ( is_admin() ) {
 							}
 
 							echo "<form action=".esc_url(admin_url()).">";
-							wp_nonce_field( "memusage", "memusage" );
+							wp_nonce_field( "memusage" );
 							echo esc_html(__('Number of measuring points', 'wp-memory-usage')).': <input type=number name=nomeas value="'.esc_attr($wpmemoryusage_settings["nomeas"]).'"><br>';
 							echo esc_html(__('Milliseconds between page reloads', 'wp-memory-usage')).': <input type=number name=secrel value="'.esc_attr($wpmemoryusage_settings["secrel"]).'"><br>';
 							echo '<input type=submit value="'.esc_html(__('Store settings', 'wp-memory-usage')).'">';
@@ -189,7 +208,8 @@ if ( is_admin() ) {
 							$z = 1;
 							$validatedValue_z = filter_input(INPUT_GET, 'meme', FILTER_VALIDATE_INT);
 							if ($validatedValue_z && $validatedValue_z>0) { 
-									$z = $_GET["meme"];
+								$z = $this->getinput("meme");
+								#$z = $_GET["meme"];
 							}
 							
 							if ($z==1) {
@@ -216,13 +236,13 @@ if ( is_admin() ) {
 					
 							$colgreen = "#d9ead3";
 							$colred = "#f4cccc";
-
+							
 							if ($cst=="st" && $wpmemoryusage_settings["nomeas"]==$anz) {
-								echo '<a href='.esc_url(admin_url()).'?c=st>'.esc_html(__('Restart Measurement', 'wp-memory-usage')).'</a><hr>';
+								echo '<a href='.esc_url(wp_nonce_url(admin_url().'?c=st', 'memusage')).'>'.esc_html(__('Restart Measurement', 'wp-memory-usage')).'</a><hr>';
 							} else if ($cst=="st" && $wpmemoryusage_settings["nomeas"]!=$anz) {
-								echo '<a href='.esc_url(admin_url()).'?ac=stop>'.esc_html(__('Stop Measurement', 'wp-memory-usage')).'</a><hr>';
+								echo '<a href='.esc_url(wp_nonce_url(admin_url().'?ac=stop', 'memusage')).'>'.esc_html(__('Stop Measurement', 'wp-memory-usage')).'</a><hr>';
 							} else {
-								echo '<a href='.esc_url(admin_url()).'?c=st>'.esc_html(__('Start Measurement', 'wp-memory-usage')).'</a><hr>';
+								echo '<a href='.esc_url(wp_nonce_url(admin_url().'?c=st', 'memusage')).'>'.esc_html(__('Start Measurement', 'wp-memory-usage')).'</a><hr>';
 							}
 					
 						$error_WP_MEMORY_LIMIT_not_set = esc_html(__('WP_MEMORY_LIMIT not set', 'wp-memory-usage'));
@@ -347,7 +367,10 @@ if ( is_admin() ) {
 							if ($anzpoints < $wpmemoryusage_settings["nomeas"] && $cst=="st") {
 								$next = 1+$z;
 								echo "<script>";
-								echo 'setTimeout(function() {window.location.assign("'.esc_url(admin_url()).'?c=st&meme='.esc_html($next).'");}, '.esc_html($wpmemoryusage_settings["secrel"]).');';
+								#echo 'setTimeout(function() {window.location.assign("'.esc_url(admin_url()).'?c=st&meme='.esc_html($next).'");}, '.esc_html($wpmemoryusage_settings["secrel"]).');';
+								echo 'setTimeout(
+									function() {
+										window.location.assign("'.esc_url(wp_nonce_url(admin_url(), 'memusage')).'&c=st&meme='.esc_attr($next).'");}, '.esc_html($wpmemoryusage_settings["secrel"]).');';
 								echo "</script>";
 								#echo '<a href="javascript:newDoc()">jump '.$next.'</a><hr>';
 							}
@@ -388,15 +411,24 @@ if ( is_admin() ) {
 		}
 
 		private function get_ip_adress() {
-			if (isset($_SERVER[ 'SERVER_ADDR' ]) && !empty($_SERVER[ 'SERVER_ADDR' ])) {
-				$this->ipadr = $_SERVER[ 'SERVER_ADDR' ];
+			$get_SERVER_ADDR = $this->getserverinput('SERVER_ADDR');
+			#if (isset($_SERVER[ 'SERVER_ADDR' ]) && !empty($_SERVER[ 'SERVER_ADDR' ])) {
+			if (!empty($get_SERVER_ADDR)) {
+				$this->ipadr = $get_SERVER_ADDR;
+				#$this->ipadr = $_SERVER[ 'SERVER_ADDR' ];
 			}
-			if (empty($this->ipadr) && isset($_SERVER[ 'LOCAL_ADDR' ]) && !empty($_SERVER[ 'LOCAL_ADDR' ])) {
-				$this->ipadr = $_SERVER[ 'LOCAL_ADDR' ];
+			$get_LOCAL_ADDR = $this->getserverinput('LOCAL_ADDR');
+			if (empty($this->ipadr) && !empty($get_LOCAL_ADDR)) {
+			#if (empty($this->ipadr) && isset($_SERVER[ 'LOCAL_ADDR' ]) && !empty($_SERVER[ 'LOCAL_ADDR' ])) {
+				$this->ipadr = $get_LOCAL_ADDR;
+				#$this->ipadr = $_SERVER[ 'LOCAL_ADDR' ];
 			}
 			
-			if (!empty($_SERVER['SERVER_NAME'])) {
-				$this->servername = " (".$_SERVER['SERVER_NAME'].")";
+			$get_SERVER_NAME = $this->getserverinput('SERVER_NAME');
+			if (!empty($get_SERVER_NAME)) {
+			#if (!empty($_SERVER['SERVER_NAME'])) {
+				$this->servername = " (".$get_SERVER_NAME.")";
+				#$this->servername = " (".$_SERVER['SERVER_NAME'].")";
 			}
 		}
 

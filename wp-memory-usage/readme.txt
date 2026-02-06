@@ -3,8 +3,8 @@ Contributors: berkux
 Tags: memory, usage, server, php, admin
 Requires at least: 5.3
 Requires PHP: 7.0
-Tested up to: 6.6
-Stable tag: 1.2.10
+Tested up to: 6.9
+Stable tag: 1.2.11
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -61,6 +61,10 @@ Copyright 2009-2013 by Alex Rabe, 2022- Bernhard Kux
 4. Screenshot Admin footer
 
 == Changelog ==
+= 1.2.11 =
+* Plugin is ok with WP 6.9
+* The plugin is compatible with PluginCheckPlugin Version 1.7.0
+
 = 1.2.10 =
 * Ok with WordPress 6.5.4
 * PluginCheckPlugin Version 1.0.1 ok, except "trademarked_term": "WP-Memory-Usage" and "wp-memory-usage" are today "restricted terms". This Plugin entered the WordPress repositoryx in 2009, then those terms were ok.
@@ -100,7 +104,6 @@ Copyright 2009-2013 by Alex Rabe, 2022- Bernhard Kux
 * Plugin ok with PHP 7.2 and WordPress 5.8.2 (fixed some issues) 
 
 == Upgrade Notice ==
-= 1.2.10 =
-* Ok with WordPress 6.5.4
-* PluginCheckPlugin Version 1.0.1 ok, except "trademarked_term": "WP-Memory-Usage" and "wp-memory-usage" are today "restricted terms". This Plugin entered the WordPress repositoryx in 2009, then those terms were ok.
-* Changes to pass PluginCheckPlugin: Escaping output, gmdate() instead of date()
+= 1.2.11 =
+* Plugin is ok with WP 6.9
+* The plugin is compatible with PluginCheckPlugin Version 1.7.0
