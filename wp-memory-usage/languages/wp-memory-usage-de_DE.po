@@ -1,77 +1,890 @@
+# German translation for WP-Memory-Usage
+# Copyright (C) 2025
+# This file is distributed under the same license as the WP-Memory-Usage plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: wp-memory-usage\n"
-"POT-Creation-Date: 2022-01-08 23:39+0100\n"
-"PO-Revision-Date: 2022-01-08 23:40+0100\n"
+"Project-Id-Version: WP-Memory-Usage 2.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-01 00:00+0000\n"
+"PO-Revision-Date: 2025-03-01 00:00+0000\n"
 "Last-Translator: \n"
-"Language-Team: BKux\n"
+"Language-Team: German\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-KeywordsList: __\n"
-"X-Poedit-SearchPath-0: readme.txt\n"
-"X-Poedit-SearchPath-1: wp-memory-usage.php\n"
+"X-Domain: wp-memory-usage\n"
 
-#: wp-memory-usage.php:115
-msgid "PHP Version"
-msgstr "PHP Version"
+msgid " (or chown it to the webserver user)"
+msgstr " (oder chown auf den Webserver-Benutzer)"
 
-#: wp-memory-usage.php:116
+msgid "%"
+msgstr "%"
+
+#. translators: 1: number of displayed events, 2: number of total stored events
+msgid "%1$d recent events displayed (%2$d stored events),"
+msgstr "%1$d aktuelle Ereignisse angezeigt (%2$d gespeicherte Ereignisse),"
+
+msgid "- AJAX action:"
+msgstr "- AJAX-Aktion:"
+
+msgid "- Admin screen:"
+msgstr "- Admin-Seite:"
+
+msgid "- Consider raising PHP memory_limit / WP_MEMORY_LIMIT if appropriate"
+msgstr "- PHP memory_limit / WP_MEMORY_LIMIT erhöhen, falls sinnvoll"
+
+msgid "- If it is an import/editor screen, try with fewer plugins active"
+msgstr "- Bei Import- oder Editor-Seiten: mit weniger aktiven Plugins testen"
+
+msgid "- Method:"
+msgstr "- Methode:"
+
+msgid "- Post ID:"
+msgstr "- Beitrags-ID:"
+
+msgid "- REST route:"
+msgstr "- REST-Route:"
+
+msgid "- Reproduce this URL/action and temporarily disable recently added/updated plugins"
+msgstr "- Diese URL/Aktion reproduzieren und kürzlich hinzugefügte/aktualisierte Plugins vorübergehend deaktivieren"
+
+msgid "- Type:"
+msgstr "- Typ:"
+
+msgid "- URI:"
+msgstr "- URI:"
+
+msgid "- User:"
+msgstr "- Benutzer:"
+
+msgid "Acceptable for most sites. For WooCommerce, LMS or heavy builders, 256 MB+ is better."
+msgstr "Für die meisten Websites ausreichend. Für WooCommerce, LMS oder umfangreiche Builder sind 256 MB+ besser."
+
+msgid "Active log:"
+msgstr "Aktives Log:"
+
+msgid "After changing values, clear caches (object cache, page cache) and re-test the action that caused the peak."
+msgstr "Nach Änderungen: Caches leeren (Object-Cache, Seiten-Cache) und die Aktion erneut testen, die den Spitzenwert verursacht hat."
+
+msgid "Alert email recipient"
+msgstr "E-Mail-Empfänger für Alerts"
+
+msgid "Alert thresholds in absolute values"
+msgstr "Alert-Schwellenwerte in absoluten Werten"
+
+msgid "All checks passed"
+msgstr "Alle Prüfungen bestanden"
+
+msgid "All thresholds are based on the effective memory limit of your site (usually the smaller value of PHP memory_limit and WP_MEMORY_LIMIT). Example: if the limit is 256 MB and you set \"Warning\" to 70%, the warning level starts at about 179 MB."
+msgstr "Alle Schwellenwerte basieren auf dem effektiven Speicherlimit Ihrer Website (in der Regel der kleinere Wert aus PHP memory_limit und WP_MEMORY_LIMIT). Beispiel: Bei einem Limit von 256 MB und \"Warnung\" auf 70% beginnt die Warnstufe bei ca. 179 MB."
+
+msgid "Assessment & Recommendations"
+msgstr "Bewertung & Empfehlungen"
+
+msgid "At this level you may already be getting OOM errors before the alert fires. 95% is a safer upper bound."
+msgstr "Bei diesem Wert können bereits OOM-Fehler auftreten, bevor der Alert ausgelöst wird. 95% ist eine sicherere Obergrenze."
+
+msgid "Backup log files:"
+msgstr "Backup-Logdateien:"
+
 msgid "Bit OS"
 msgstr "Bit OS"
 
-#: wp-memory-usage.php:119
-msgid "sec"
-msgstr "Sek"
+msgid "CRITICAL"
+msgstr "KRITISCH"
 
-#: wp-memory-usage.php:120
-msgid "Max execution time: "
-msgstr "Max Ausführungszeit: "
+msgid "CRITICAL : "
+msgstr "KRITISCH : "
 
-#: wp-memory-usage.php:125
-msgid "Memory limits"
-msgstr "Speicherlimit"
+msgid "Check"
+msgstr "Prüfung"
 
-#: wp-memory-usage.php:128
-msgid "Wordpress"
-msgstr "Wordpress"
+msgid "Check Installation"
+msgstr "Installation prüfen"
 
-#: wp-memory-usage.php:134
-msgid "PHP "
-msgstr ""
+msgid "Check directory permissions and available disk space."
+msgstr "Verzeichnisrechte und verfügbaren Speicherplatz prüfen."
 
-#: wp-memory-usage.php:138
-msgid "Memory usage"
-msgstr "Speichernutzung"
+msgid "Check filesystem for corruption or encoding issues."
+msgstr "Dateisystem auf Beschädigungen oder Kodierungsprobleme prüfen."
 
-#: wp-memory-usage.php:156
-msgid "Memory Overview"
-msgstr "Speicherüberblick"
+msgid "Choose how email notifications should behave. The goal is: you get warned when there is a real risk — without being flooded with emails."
+msgstr "Verhalten der E-Mail-Benachrichtigungen festlegen. Ziel: Warnung bei echtem Risiko – ohne E-Mail-Flut."
 
-#: wp-memory-usage.php:156
-msgid "Servertime"
-msgstr "Serverzeit"
+msgid "Choose how memory usage should be measured. Peak memory catches short spikes during the request."
+msgstr "Messmethode für die Speichernutzung wählen. Spitzenspeicher erfasst kurze Spitzen während der Anfrage."
 
-#: wp-memory-usage.php:186
-msgid "WP Memory Limit:"
-msgstr "WP Speicherlimit:"
+msgid "Close to the limit. Usually no immediate outage, but you should watch it."
+msgstr "Nahe am Limit. In der Regel kein sofortiger Ausfall, aber beobachten."
 
-#: wp-memory-usage.php:186 wp-memory-usage.php:187
-msgid "of"
-msgstr "von"
+msgid "Common actions"
+msgstr "Häufige Maßnahmen"
 
-#: wp-memory-usage.php:187
-msgid "PHP Memory Limit:"
-msgstr "PHP Speicherlimit:"
+msgid "Configure when and how email alerts are sent."
+msgstr "Konfigurieren Sie, wann und wie E-Mail-Alerts gesendet werden."
 
-#: wp-memory-usage.php:188
+msgid "Configure which request types and memory states should be logged."
+msgstr "Konfigurieren Sie, welche Anfrage-Typen und Speicherzustände protokolliert werden sollen."
+
+msgid "Consider a gap of at least 10% so you have time to react between levels."
+msgstr "Ein Abstand von mindestens 10% ist empfehlenswert, damit Zeit zum Reagieren bleibt."
+
+msgid "Consider a gap of at least 5%."
+msgstr "Ein Abstand von mindestens 5% wird empfohlen."
+
+msgid "Consider upgrading to PHP 8.0 or higher for full feature support."
+msgstr "Upgrade auf PHP 8.0 oder höher für vollständige Funktionsunterstützung empfohlen."
+
+msgid "Context:"
+msgstr "Kontext:"
+
+#. translators: %s: filename that could not be deleted
+msgid "Could not delete: %s"
+msgstr "Konnte nicht gelöscht werden: %s"
+
+msgid "Could not determine the effective memory limit. Check that WP_MEMORY_LIMIT or PHP memory_limit are set."
+msgstr "Effektives Speicherlimit konnte nicht ermittelt werden. Bitte prüfen Sie, ob WP_MEMORY_LIMIT oder PHP memory_limit gesetzt sind."
+
+msgid "Could not write test file to "
+msgstr "Testdatei konnte nicht geschrieben werden nach "
+
+msgid "Create the directory manually and make it writable for the webserver user (e.g. www-data). Command: mkdir -p "
+msgstr "Verzeichnis manuell erstellen und für den Webserver-Benutzer (z.B. www-data) schreibbar machen. Befehl: mkdir -p "
+
+msgid "Critical"
+msgstr "Kritisch"
+
+msgid "Critical threshold"
+msgstr "Kritischer Schwellenwert"
+
+msgid "Critical threshold (in percent). This is \"high risk of out‑of‑memory errors\". Example: 95 means \"the request almost hit the limit\". If you see this on the frontend, visitors can get 500 errors."
+msgstr "Kritischer Schwellenwert (in Prozent). Dies bedeutet \"hohes Risiko für Speicherfehler\". Beispiel: 95 bedeutet, dass die Anfrage fast das Limit erreicht hat. Tritt dies im Frontend auf, können Besucher 500-Fehler erhalten."
+
+msgid "Critical threshold is set to"
+msgstr "Kritischer Schwellenwert ist gesetzt auf"
+
+msgid "Critical threshold is very high"
+msgstr "Kritischer Schwellenwert ist sehr hoch"
+
+msgid "Current Memory usage"
+msgstr "Aktuelle Speichernutzung"
+
+msgid "DANGER"
+msgstr "GEFAHR"
+
+msgid "DANGER   : "
+msgstr "GEFAHR   : "
+
+msgid "DISABLE_WP_CRON is TRUE – WP-Cron is disabled"
+msgstr "DISABLE_WP_CRON ist TRUE – WP-Cron ist deaktiviert"
+
+msgid "Danger"
+msgstr "Gefahr"
+
+msgid "Danger threshold"
+msgstr "Gefahren-Schwellenwert"
+
+msgid "Danger threshold (in percent). Use this for \"take action soon\". Example: 85 means \"this request consumed 85% of the available memory\". Repeated hits here often lead to errors on heavy pages or imports."
+msgstr "Gefahren-Schwellenwert (in Prozent). Für \"bald handeln\". Beispiel: 85 bedeutet, dass diese Anfrage 85% des verfügbaren Speichers verbraucht hat. Wiederholte Treffer führen oft zu Fehlern bei umfangreichen Seiten oder Importen."
+
+msgid "Deactivate and reactivate the plugin, or visit the settings page once to trigger rescheduling."
+msgstr "Plugin deaktivieren und erneut aktivieren oder die Einstellungsseite einmal aufrufen, um die Neuplanung auszulösen."
+
+msgid "Dedup"
+msgstr "Dedup"
+
+msgid "Delete rotated Logfiles"
+msgstr "Rotierte Logdateien löschen"
+
+msgid "Delete rotated Logfiles every X hours"
+msgstr "Rotierte Logdateien alle X Stunden löschen"
+
+msgid "Delete this digest file? This cannot be undone."
+msgstr "Diese Digest-Datei löschen? Dies kann nicht rückgängig gemacht werden."
+
+msgid "Delete this file"
+msgstr "Diese Datei löschen"
+
+#. translators: %s: filename that was deleted
+msgid "Deleted: %s"
+msgstr "Gelöscht: %s"
+
+msgid "Digest files:"
+msgstr "Digest-Dateien:"
+
+msgid "Digest interval"
+msgstr "Digest-Intervall"
+
+msgid "Directory did not exist – created now: "
+msgstr "Verzeichnis existierte nicht – jetzt erstellt: "
+
+msgid "Directory exists but is NOT writable: "
+msgstr "Verzeichnis existiert, ist aber NICHT schreibbar: "
+
+msgid "Directory is writable"
+msgstr "Verzeichnis ist schreibbar"
+
+msgid "Disabled in settings"
+msgstr "In den Einstellungen deaktiviert"
+
+msgid "Disk space (log directory)"
+msgstr "Speicherplatz (Log-Verzeichnis)"
+
+msgid "Does NOT exist and could not be created: "
+msgstr "Existiert NICHT und konnte nicht erstellt werden: "
+
+msgid "Dur  : "
+msgstr "Dauer: "
+
+msgid "Duration"
+msgstr "Dauer"
+
+msgid "Effective limit is"
+msgstr "Effektives Limit ist"
+
+msgid "Effective limit is very low:"
+msgstr "Effektives Limit ist sehr niedrig:"
+
+msgid "Effective limit used for alerts"
+msgstr "Effektives Limit für Alerts"
+
+msgid "Email address that should receive alerts. Tip: use a shared mailbox or a ticket system address so alerts don't get lost. You can also use your agency's address if they maintain the site."
+msgstr "E-Mail-Adresse für Alerts. Tipp: Eine gemeinsam genutzte Mailbox oder Ticket-System-Adresse verwenden, damit keine Alerts verloren gehen. Auch die Adresse einer Agentur kann eingetragen werden."
+
+msgid "Email alerts"
+msgstr "E-Mail-Alerts"
+
+msgid "Email sending is not functional on this installation."
+msgstr "E-Mail-Versand ist auf dieser Installation nicht funktionsfähig."
+
+msgid "Enable \"Send email alerts\" in Settings to receive notifications."
+msgstr "\"E-Mail-Alerts senden\" in den Einstellungen aktivieren, um Benachrichtigungen zu erhalten."
+
+msgid "Enable daily digest (Smart mode). You will receive one summary email per day with the most important alerts and where they happened. Useful if you don't want immediate emails for every event."
+msgstr "Täglichen Digest aktivieren (Smart-Modus). Sie erhalten einmal täglich eine Zusammenfassungs-E-Mail mit den wichtigsten Alerts und wo sie aufgetreten sind. Nützlich, wenn keine sofortigen E-Mails für jedes Ereignis gewünscht werden."
+
+msgid "Enable email alerts. If disabled, the plugin still shows the status in the admin bar and stores results, but it will not send any emails."
+msgstr "E-Mail-Alerts aktivieren. Wenn deaktiviert, zeigt das Plugin weiterhin den Status in der Admin-Leiste und speichert Ergebnisse, sendet aber keine E-Mails."
+
+msgid "Enabled but recipient address is invalid: \""
+msgstr "Aktiviert, aber Empfängeradresse ist ungültig: \""
+
+msgid "Enabled, recipient: "
+msgstr "Aktiviert, Empfänger: "
+
+msgid "Enter a valid email address in Settings."
+msgstr "Gültige E-Mail-Adresse in den Einstellungen eingeben."
+
+msgid "Event Distribution"
+msgstr "Ereignisverteilung"
+
+msgid "Events each"
+msgstr "Ereignisse je"
+
+#. translators: %d: number of minutes
+msgid "Every %d minutes (WPMU)"
+msgstr "Alle %d Minuten (WPMU)"
+
+msgid "File   : "
+msgstr "Datei  : "
+
+msgid "File written but JSON parse failed"
+msgstr "Datei geschrieben, aber JSON-Analyse fehlgeschlagen"
+
+msgid "Fix the log directory issue first."
+msgstr "Zuerst das Problem mit dem Log-Verzeichnis beheben."
+
+msgid "For safety, this plugin uses the lower of the WordPress and PHP limits (when both are set). That reflects what will actually break first."
+msgstr "Zur Sicherheit verwendet dieses Plugin den niedrigeren Wert aus WordPress- und PHP-Limit (sofern beide gesetzt sind). Das spiegelt wider, was zuerst Probleme verursachen wird."
+
+msgid "Free: "
+msgstr "Frei: "
+
+msgid "From"
+msgstr "Von"
+
+msgid "From : "
+msgstr "Von  : "
+
+msgid "Function available – current peak: "
+msgstr "Funktion verfügbar – aktueller Spitzenwert: "
+
+msgid "Good."
+msgstr "Gut."
+
+msgid "High risk. Actions like editing, imports, backups or WooCommerce tasks may fail."
+msgstr "Hohes Risiko. Aktionen wie Bearbeiten, Importe, Backups oder WooCommerce-Aufgaben können fehlschlagen."
+
+msgid "Hint / Action"
+msgstr "Hinweis / Maßnahme"
+
+msgid "How to alert"
+msgstr "Alert-Einstellungen"
+
+msgid "How to measure"
+msgstr "Messmethode"
+
 msgid "IP-Address"
 msgstr "IP-Adresse"
 
-#: wp-memory-usage.php:189
+msgid "If it happens during imports/backups/crawlers: schedule these jobs at low traffic times and enable Dedup/Smart to avoid alert storms."
+msgstr "Bei Importen/Backups/Crawlern: Jobs zu verkehrsarmen Zeiten planen und Dedup/Smart aktivieren, um Alert-Fluten zu vermeiden."
+
+msgid "If it happens on frontend pages: check the page and its plugins (builder, gallery, search, related posts, cache). Disable suspects temporarily to confirm."
+msgstr "Bei Frontend-Seiten: Seite und zugehörige Plugins prüfen (Builder, Galerie, Suche, verwandte Beiträge, Cache). Verdächtige Plugins vorübergehend deaktivieren."
+
+msgid "If it happens only in the admin area: reduce noise by using Smart mode, or set \"Admin: only Critical\"."
+msgstr "Nur im Admin-Bereich: Rauschen durch Smart-Modus reduzieren oder \"Admin: nur Kritisch\" setzen."
+
+msgid "If you receive alerts during expected heavy tasks (e.g. backups), increase the Warning/Danger thresholds slightly. Keep Critical high (e. g. 95%) so you still get a real emergency signal."
+msgstr "Bei Alerts während erwarteter aufwändiger Aufgaben (z.B. Backups): Warnung/Gefahr-Schwellenwerte leicht erhöhen. Kritisch weiterhin hoch halten (z.B. 95%), damit echte Notfallsignale erhalten bleiben."
+
+msgid "In wp-config.php you can define WP_MEMORY_LIMIT and WP_MAX_MEMORY_LIMIT (example: define('WP_MEMORY_LIMIT', \"256M\");). This affects WordPress, but cannot exceed the server PHP limit."
+msgstr "In der wp-config.php können WP_MEMORY_LIMIT und WP_MAX_MEMORY_LIMIT definiert werden (Beispiel: define('WP_MEMORY_LIMIT', \"256M\");). Das betrifft WordPress, kann aber das server-seitige PHP-Limit nicht überschreiten."
+
+msgid "Increase the PHP memory limit if your hosting allows it (often the quickest fix)."
+msgstr "PHP-Speicherlimit erhöhen, sofern das Hosting dies erlaubt (oft die schnellste Lösung)."
+
+msgid "Insufficient permissions."
+msgstr "Unzureichende Berechtigungen."
+
+msgid "Latest Digest"
+msgstr "Neuester Digest"
+
+msgid "Level"
+msgstr "Stufe"
+
+msgid "Like \"Minimal\", but with protection against repeated alerts for the same action. If the same URL, admin screen, AJAX action or REST route keeps triggering the alert, you will receive at most one email per configured cooldown period for that specific action."
+msgstr "Wie \"Minimal\", aber mit Schutz gegen wiederholte Alerts für dieselbe Aktion. Wenn dieselbe URL, Admin-Seite, AJAX-Aktion oder REST-Route wiederholt Alerts auslöst, erhalten Sie pro konfigurierter Abkühlzeit höchstens eine E-Mail für diese spezifische Aktion."
+
+msgid "Limit: "
+msgstr "Limit: "
+
+msgid "Log Admin"
+msgstr "Admin protokollieren"
+
+msgid "Log Ajax"
+msgstr "Ajax protokollieren"
+
+msgid "Log Critical"
+msgstr "Kritisch protokollieren"
+
+msgid "Log Cron"
+msgstr "Cron protokollieren"
+
+msgid "Log Danger"
+msgstr "Gefahr protokollieren"
+
+msgid "Log OK"
+msgstr "OK protokollieren"
+
+msgid "Log Rest"
+msgstr "REST protokollieren"
+
+msgid "Log Warning"
+msgstr "Warnung protokollieren"
+
+msgid "Log directory exists"
+msgstr "Log-Verzeichnis vorhanden"
+
+msgid "Log directory writable"
+msgstr "Log-Verzeichnis schreibbar"
+
+msgid "Log favicon.ico"
+msgstr "favicon.ico protokollieren"
+
+msgid "Log file write & read test"
+msgstr "Schreib- & Lesetest der Logdatei"
+
+msgid "Log files overview"
+msgstr "Übersicht Logdateien"
+
+msgid "Logging"
+msgstr "Protokollierung"
+
+msgid "MB"
+msgstr "MB"
+
+msgid "Make sure this path persists across deployments."
+msgstr "Sicherstellen, dass dieser Pfad Deployments übersteht."
+
+msgid "Max execution time: "
+msgstr "Maximale Ausführungszeit: "
+
+msgid "Meaning"
+msgstr "Bedeutung"
+
+msgid "Memory Alerts"
+msgstr "Speicher-Alerts"
+
+msgid "Memory Overview"
+msgstr "Speicher-Übersicht"
+
+msgid "Memory Threshold Alerts"
+msgstr "Speicher-Schwellenwert-Alerts"
+
+msgid "Memory limit for admin-area tasks that can be heavier (updates, editor, imports). This is often higher than WP_MEMORY_LIMIT."
+msgstr "Speicherlimit für Admin-Aufgaben, die aufwändiger sein können (Updates, Editor, Importe). Oft höher als WP_MEMORY_LIMIT."
+
+msgid "Memory limit for the regular (frontend) WordPress runtime. WordPress may increase the PHP limit up to this value if possible."
+msgstr "Speicherlimit für die reguläre WordPress-Laufzeit (Frontend). WordPress kann das PHP-Limit bis zu diesem Wert erhöhen, sofern möglich."
+
+msgid "Memory limits"
+msgstr "Speicherlimits"
+
+#. translators: %d: number of merged digest files
+msgid "Merged: %d files"
+msgstr "Zusammengeführt: %d Dateien"
+
+msgid "Minimal"
+msgstr "Minimal"
+
+msgid "Minutes"
+msgstr "Minuten"
+
+msgid "Modes in plain language:"
+msgstr "Modi in einfacher Sprache:"
+
+msgid "Most WordPress sites need at least 128 MB; WooCommerce, page builders or heavy plugins often need 256 MB or more. You will likely see out-of-memory errors."
+msgstr "Die meisten WordPress-Websites benötigen mindestens 128 MB; WooCommerce, Page-Builder oder umfangreiche Plugins oft 256 MB oder mehr. Speicherfehler sind wahrscheinlich."
+
+msgid "NOT loaded – required by this plugin"
+msgstr "NICHT geladen – wird von diesem Plugin benötigt"
+
+msgid "Next run: "
+msgstr "Nächste Ausführung: "
+
+msgid "No data"
+msgstr "Keine Daten"
+
+msgid "No digest created yet. See \"Digest interval\" in the settings."
+msgstr "Noch kein Digest erstellt. Siehe \"Digest-Intervall\" in den Einstellungen."
+
+msgid "No digest files yet – they are created automatically on the first cron run."
+msgstr "Noch keine Digest-Dateien – werden beim ersten Cron-Lauf automatisch erstellt."
+
+msgid "No events recorded yet."
+msgstr "Noch keine Ereignisse aufgezeichnet."
+
+msgid "Not available on this PHP build"
+msgstr "Auf diesem PHP-Build nicht verfügbar"
+
+msgid "OK       : "
+msgstr "OK       : "
+
+msgid "Occurrences"
+msgstr "Vorkommen"
+
+msgid "Open the \"Digest\" or \"History\" tab and look at the context (URL, admin screen, AJAX action, REST route, cron). This tells you which page is involved."
+msgstr "Den Tab \"Digest\" oder \"Verlauf\" öffnen und den Kontext ansehen (URL, Admin-Seite, AJAX-Aktion, REST-Route, Cron). Das zeigt, welche Seite betroffen ist."
+
 msgid "PHP"
 msgstr "PHP"
+
+msgid "PHP "
+msgstr "PHP "
+
+msgid "PHP Memory Limit:"
+msgstr "PHP-Speicherlimit:"
+
+msgid "PHP Version"
+msgstr "PHP-Version"
+
+msgid "PHP extension:"
+msgstr "PHP-Erweiterung:"
+
+msgid "Peak memory tracking is disabled. The plugin falls back to memory_get_usage()."
+msgstr "Spitzenspeicher-Verfolgung ist deaktiviert. Das Plugin nutzt stattdessen memory_get_usage()."
+
+msgid "REQUEST TYPES"
+msgstr "ANFRAGE-TYPEN"
+
+msgid "Ratio: "
+msgstr "Verhältnis: "
+
+msgid "Recommended for most sites. \"Critical\" alerts are sent immediately. For \"Warning\" and \"Danger\", the plugin waits until the problem repeats several times within a short time window (for example 3 times within 10 minutes). This filters out one‑off spikes. Optionally, you can get a daily summary email (digest). You can also ignore admin‑only spikes (backend) so you focus on issues that affect visitors."
+msgstr "Für die meisten Websites empfohlen. \"Kritisch\"-Alerts werden sofort gesendet. Bei \"Warnung\" und \"Gefahr\" wartet das Plugin, bis das Problem sich innerhalb eines kurzen Zeitfensters wiederholt (z.B. 3-mal in 10 Minuten). Einzelne Spitzen werden so herausgefiltert. Optional: tägliche Zusammenfassungs-E-Mail (Digest). Admin-Spitzen können ignoriert werden, um sich auf Besucher-relevante Probleme zu konzentrieren."
+
+msgid "Request types"
+msgstr "Anfrage-Typen"
+
+msgid "Result"
+msgstr "Ergebnis"
+
+msgid "Rotate every X Minutes the logfile and create a digest"
+msgstr "Logdatei alle X Minuten rotieren und Digest erstellen"
+
+msgid "Run: chmod 755 "
+msgstr "Ausführen: chmod 755 "
+
+msgid "STATUS SUMMARY"
+msgstr "STATUS-ZUSAMMENFASSUNG"
+
+msgid "Send email alerts"
+msgstr "E-Mail-Alerts senden"
+
+msgid "Servertime"
+msgstr "Serverzeit"
+
+msgid "Setting"
+msgstr "Einstellung"
+
+msgid "Settings & Monitor"
+msgstr "Einstellungen & Monitor"
+
+msgid "Settings:"
+msgstr "Einstellungen:"
+
+msgid "Settings: "
+msgstr "Einstellungen: "
+
+msgid "Show"
+msgstr "Anzeigen"
+
+msgid "Show Digest:"
+msgstr "Digest anzeigen:"
+
+msgid "Site   : "
+msgstr "Website: "
+
+msgid "Skipped – log directory not writable"
+msgstr "Übersprungen – Log-Verzeichnis nicht schreibbar"
+
+msgid "Smart"
+msgstr "Smart"
+
+msgid "State"
+msgstr "Status"
+
+msgid "State: "
+msgstr "Status: "
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Status Summary"
+msgstr "Status-Zusammenfassung"
+
+msgid "Step 1: Understand the severity"
+msgstr "Schritt 1: Schweregrad verstehen"
+
+msgid "Step 2: Identify what triggered it"
+msgstr "Schritt 2: Auslöser identifizieren"
+
+msgid "Suggested actions:"
+msgstr "Empfohlene Maßnahmen:"
+
+msgid "TIME RANGE"
+msgstr "ZEITRAUM"
+
+msgid "TOP URIs WITH ALERTS (warn/danger/critical | avg | max)"
+msgstr "TOP-URIs MIT ALERTS (Warnung/Gefahr/Kritisch | Durchschn. | Max.)"
+
+msgid "The PHP memory_limit is controlled by your hosting environment (php.ini, user.ini, .htaccess, or a hosting control panel). If it is lower than your WordPress settings, PHP wins."
+msgstr "Das PHP memory_limit wird von Ihrer Hosting-Umgebung gesteuert (php.ini, user.ini, .htaccess oder Hosting-Verwaltungspanel). Wenn es niedriger als Ihre WordPress-Einstellungen ist, gilt das PHP-Limit."
+
+msgid "The PHP-level memory limit set by your server / hosting. This is the hard ceiling unless you can raise it in PHP configuration."
+msgstr "Das PHP-Speicherlimit, das von Ihrem Server/Hosting gesetzt wird. Dies ist die absolute Obergrenze, sofern sie nicht in der PHP-Konfiguration erhöht werden kann."
+
+msgid "This plugin uses WP-Cron for log rotation and digest creation. Make sure a real system cron runs wp-cron.php regularly (e.g. every 5 minutes), otherwise no digests will be created."
+msgstr "Dieses Plugin verwendet WP-Cron für Log-Rotation und Digest-Erstellung. Sicherstellen, dass ein echter System-Cron wp-cron.php regelmäßig ausführt (z.B. alle 5 Minuten), sonst werden keine Digests erstellt."
+
+msgid "This tab checks whether the plugin can work correctly on this server."
+msgstr "Dieser Tab prüft, ob das Plugin auf diesem Server korrekt funktionieren kann."
+
+msgid "This tab explains practical next steps when you receive a memory alert. You do not need to be a developer to apply most of these actions."
+msgstr "Dieser Tab erklärt praktische nächste Schritte beim Erhalt eines Speicher-Alerts. Die meisten Maßnahmen erfordern keine Programmierkenntnisse."
+
+msgid "This tab shows the memory limits that actually apply to your site. Memory issues are often caused by a limit that is lower than expected."
+msgstr "Dieser Tab zeigt die tatsächlich geltenden Speicherlimits Ihrer Website. Speicherprobleme werden oft durch ein unerwartet niedriges Limit verursacht."
+
+msgid "Threshold Alerts"
+msgstr "Schwellenwert-Alerts"
+
+msgid "Threshold settings look good: Warn"
+msgstr "Schwellenwert-Einstellungen sehen gut aus: Warnung"
+
+msgid "Thresholds"
+msgstr "Schwellenwerte"
+
+msgid "Thresholds are evaluated as percentage of the effective memory limit (min of PHP and WP limits where applicable)."
+msgstr "Schwellenwerte werden als Prozentsatz des effektiven Speicherlimits bewertet (Minimum aus PHP- und WP-Limit, soweit zutreffend)."
+
+msgid "Tight for a typical WordPress site. Consider raising to at least 128 MB (256 MB recommended). Add to wp-config.php: define('WP_MEMORY_LIMIT', '256M');"
+msgstr "Zu knapp für eine typische WordPress-Website. Auf mindestens 128 MB erhöhen (256 MB empfohlen). In wp-config.php hinzufügen: define('WP_MEMORY_LIMIT', '256M');"
+
+msgid "Time"
+msgstr "Zeit"
+
+msgid "Time window"
+msgstr "Zeitfenster"
+
+msgid "To"
+msgstr "Bis"
+
+msgid "To   : "
+msgstr "Bis  : "
+
+msgid "Toggle Columns"
+msgstr "Spalten ein-/ausblenden"
+
+msgid "Total    : "
+msgstr "Gesamt   : "
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "URI"
+msgstr "URI"
+
+msgid "Update WordPress core, themes and plugins. Memory leaks and inefficiencies are often fixed in updates."
+msgstr "WordPress-Core, Themes und Plugins aktualisieren. Speicherlecks und Ineffizienzen werden oft durch Updates behoben."
+
+msgid "Upgrade PHP to at least 7.4. PHP 8.1+ is recommended."
+msgstr "PHP auf mindestens 7.4 aktualisieren. PHP 8.1+ wird empfohlen."
+
+msgid "Usage / Limit"
+msgstr "Nutzung / Limit"
+
+msgid "Usage: "
+msgstr "Nutzung: "
+
+msgid "Use peak memory (recommended)"
+msgstr "Spitzenspeicher verwenden (empfohlen)"
+
+msgid "Use peak memory (recommended). The plugin measures the highest memory usage during the request. This catches short spikes (for example during image processing) that might be missed when only looking at the current value."
+msgstr "Spitzenspeicher verwenden (empfohlen). Das Plugin misst den höchsten Speicherverbrauch während der Anfrage. Damit werden kurze Spitzen erfasst (z.B. bei der Bildverarbeitung), die beim reinen Blick auf den aktuellen Wert übersehen werden könnten."
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Very likely to trigger \"Allowed memory size exhausted\". Act now to avoid outages."
+msgstr "Sehr wahrscheinlich wird \"Allowed memory size exhausted\" ausgelöst. Jetzt handeln, um Ausfälle zu vermeiden."
+
+msgid "Very little free disk space – log files may not be written."
+msgstr "Sehr wenig freier Speicherplatz – Logdateien können möglicherweise nicht geschrieben werden."
+
+msgid "WARN"
+msgstr "WARNUNG"
+
+msgid "WARN     : "
+msgstr "WARNUNG  : "
+
+msgid "WP Memory Limit:"
+msgstr "WP-Speicherlimit:"
+
+msgid "WP Memory Threshold Alert"
+msgstr "WP-Speicher-Schwellenwert-Alert"
+
+msgid "WP Memory Usage"
+msgstr "WP-Speichernutzung"
+
+msgid "WP Memory Usage – Digest Report"
+msgstr "WP-Speichernutzung – Digest-Bericht"
+
+msgid "WP-Cron: cleanup hook scheduled"
+msgstr "WP-Cron: Cleanup-Hook geplant"
+
+msgid "WP_MAX_MEMORY_LIMIT should be ≥ WP_MEMORY_LIMIT."
+msgstr "WP_MAX_MEMORY_LIMIT sollte ≥ WP_MEMORY_LIMIT sein."
+
+msgid "Warn"
+msgstr "Warnung"
+
+msgid "Warning"
+msgstr "Warnung"
+
+msgid "Warning ({"
+msgstr "Warnung ("
+
+msgid "Warning threshold"
+msgstr "Warn-Schwellenwert"
+
+msgid "Warning threshold (in percent). Use this as an early heads‑up. Example: 70 means \"warn me when a request uses 70% of the available memory\". This is usually not an emergency, but it tells you where to look."
+msgstr "Warn-Schwellenwert (in Prozent). Als Frühwarnung verwenden. Beispiel: 70 bedeutet \"warnen, wenn eine Anfrage 70% des verfügbaren Speichers nutzt\". Kein Notfall, aber zeigt, wo nachzusehen ist."
+
+msgid "Warning threshold is very low"
+msgstr "Warn-Schwellenwert ist sehr niedrig"
+
+msgid "What you can do"
+msgstr "Was Sie tun können"
+
+msgid "When to adjust thresholds"
+msgstr "Wann Schwellenwerte anpassen"
+
+msgid "WordPress cannot exceed the PHP ceiling – the PHP limit wins. Raise memory_limit in php.ini / .htaccess / php_value."
+msgstr "WordPress kann die PHP-Obergrenze nicht überschreiten – das PHP-Limit gilt. memory_limit in php.ini / .htaccess / php_value erhöhen."
+
+msgid "Wordpress"
+msgstr "WordPress"
+
+msgid "Wordpress-Admin"
+msgstr "WordPress-Admin"
+
+msgid "Write → read → parse: OK"
+msgstr "Schreiben → Lesen → Parsen: OK"
+
+msgid "You only receive an email when the situation gets worse (for example OK → Warning, Warning → Danger, or Danger → Critical). If the same problem happens again and again, you will NOT receive reminder emails."
+msgstr "E-Mail nur bei Verschlechterung (z.B. OK → Warnung, Warnung → Gefahr oder Gefahr → Kritisch). Bei wiederholt gleichem Problem werden KEINE Erinnerungs-E-Mails gesendet."
+
+msgid "You will receive many false-positive alerts on normal pages. A value of 65–75% is typical."
+msgstr "Bei normalen Seiten werden viele Fehlalarme ausgelöst. Ein Wert von 65–75% ist typisch."
+
+msgid "and Critical"
+msgstr "und Kritisch"
+
+msgid "and Danger"
+msgstr "und Gefahr"
+
+msgid "critical"
+msgstr "kritisch"
+
+msgid "d.m.Y, H:i:s"
+msgstr "d.m.Y, H:i:s"
+
+msgid "danger"
+msgstr "gefahr"
+
+msgid "error(s),"
+msgstr "Fehler,"
+
+msgid "exists"
+msgstr "vorhanden"
+
+msgid "in your php.ini."
+msgstr "in Ihrer php.ini."
+
+msgid "is higher than PHP memory_limit"
+msgstr "ist höher als PHP memory_limit"
+
+msgid "is higher than WP_MAX_MEMORY_LIMIT"
+msgstr "ist höher als WP_MAX_MEMORY_LIMIT"
+
+msgid "is recommended (required for match-expressions)"
+msgstr "wird empfohlen (erforderlich für match-Ausdrücke)"
+
+msgid "loaded"
+msgstr "geladen"
+
+msgid "max"
+msgstr "Max."
+
+msgid "memory_get_peak_usage()"
+msgstr "memory_get_peak_usage()"
+
+msgid "min."
+msgstr "Min."
+
+msgid "minimum required:"
+msgstr "Mindestanforderung:"
+
+msgid "not defined"
+msgstr "nicht definiert"
+
+msgid "not yet created"
+msgstr "noch nicht erstellt"
+
+msgid "of"
+msgstr "von"
+
+msgid "ok"
+msgstr "ok"
+
+msgid "recent events"
+msgstr "aktuelle Ereignisse"
+
+msgid "recent events displayed"
+msgstr "aktuelle Ereignisse angezeigt"
+
+msgid "sec"
+msgstr "Sek"
+
+msgid "sec."
+msgstr "Sek."
+
+msgid "size:"
+msgstr "Größe:"
+
+msgid "that leaves little headroom before actual out-of-memory errors. Consider raising to 92–95%."
+msgstr "das lässt wenig Spielraum vor tatsächlichen Speicherfehlern. Erhöhung auf 92–95% empfohlen."
+
+msgid "thresholds are very close together (gap"
+msgstr "Schwellenwerte liegen sehr nah beieinander (Abstand"
+
+msgid "thresholds are very close together (gap:"
+msgstr "Schwellenwerte liegen sehr nah beieinander (Abstand:"
+
+msgid "total"
+msgstr "Gesamt"
+
+msgid "unknown"
+msgstr "unbekannt"
+
+msgid "unlimited"
+msgstr "unbegrenzt"
+
+msgid "unlimited/unknown"
+msgstr "unbegrenzt/unbekannt"
+
+msgid "warn"
+msgstr "warnung"
+
+msgid "warning(s)"
+msgstr "Warnung(en)"
+
+msgid "warning(s) – no errors"
+msgstr "Warnung(en) – keine Fehler"
+
+msgid "works, but PHP"
+msgstr "funktioniert, aber PHP"
+
+msgid "wp_mail() not available"
+msgstr "wp_mail() nicht verfügbar"
+
+msgid "wpmu_cleanup_hook is NOT scheduled"
+msgstr "wpmu_cleanup_hook ist NICHT geplant"
+
+msgid "Ø average"
+msgstr "Ø Durchschnitt"
+
+msgid "— no digest files found —"
+msgstr "— keine Digest-Dateien gefunden —"
+
+msgid "→ Digest"
+msgstr "→ Digest"
+
+msgid "≈ MB"
+msgstr "≈ MB"
+
+#. translators: %d: number of digest files
+msgid "⊕ Merge all %d digest files"
+msgstr "⊕ Alle %d Digest-Dateien zusammenführen"
+
+msgid "⚙️ Settings"
+msgstr "⚙️ Einstellungen"
+
+msgid "⚠ warn"
+msgstr "⚠ Warnung"
+
+msgid "🆘 critical"
+msgstr "🆘 Kritisch"
+
+msgid "📊 Digest"
+msgstr "📊 Digest"
+
+msgid "📋 History"
+msgstr "📋 Verlauf"
+
+msgid "📏 Memory Thresholds"
+msgstr "📏 Speicher-Schwellenwerte"
+
+msgid "🔍 Check Installation"
+msgstr "🔍 Installation prüfen"
+
+msgid "🔴 danger"
+msgstr "🔴 Gefahr"
+
+msgid "🛠️ Actions"
+msgstr "🛠️ Maßnahmen"

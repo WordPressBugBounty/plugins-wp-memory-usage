@@ -4,7 +4,7 @@ Plugin Name: WP-Memory-Usage
 Plugin URI: https://www.json-content-importer.com
 Description: Show up memory limits, current memory usage, IP-Address, PHP-Version in the dashboard and admin footer
 Author: Bernhard Kux
-Version: 1.2.11
+Version: 2.0.0
 Author URI: https://www.json-content-importer.com
 Text Domain: wp-memory-usage
 Domain Path: /languages/
@@ -21,23 +21,45 @@ if ( !function_exists( 'add_action' ) ) {
 }
 defined('ABSPATH') OR exit;
 
-if ( is_admin() ) {	
+// Load translations early for both admin and frontend.
+function wpmu_load_textdomain() {
+   $mofile = plugin_dir_path( __FILE__ ) . 'languages/wp-memory-usage-' . get_locale() . '.mo';
+   load_textdomain( 'wp-memory-usage', $mofile );
+	/*
+    error_log( 'wpmu mo-file path: ' . $mofile );
+    error_log( 'wpmu mo-file exists: ' . ( file_exists( $mofile ) ? 'YES' : 'NO' ) );
+    error_log( 'wpmu locale: ' . get_locale() );
+	$mo = new MO();
+	if ( $mo->import_from_file( $mofile) ) {
+		error_log( 'MO loaded OK, entries: ' . count( $mo->entries ) );
+	} else {
+		error_log( 'MO load FAILED' );
+	}   
+	#load_plugin_textdomain( 'wp-memory-usage', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	*/
+}
+add_action( 'plugins_loaded', 'wpmu_load_textdomain', 1 );
 
-	define( 'WPMEMORYUSAGEVERSION', '1.2.11' ); // current version number
-	
-	class wp_memory_usage {
-		private $ipadr = "";
-		private $servername = "";
-		private $memory = array();	
+const WPMU_LOG_FILE = "wpmu-log.cgi";
+const WPMU_LOG_PATH = 	ABSPATH. '../logs/wpmu/';
+
+class wp_memory_usage {
+		public $ipadr = "";
+		public $servername = "";
+		public $servernameout = "";
+		public $memory = array();	
+
 		
 		public function __construct() {
-			$this->get_ip_adress();
-            add_action( 'init', array (&$this, 'check_limit') );
-			add_action( 'wp_dashboard_setup', array (&$this, 'add_dashboard') );
+			$this->get_ip_address();
+			#$this->load_textdomain();
+			#add_action( 'init', array( $this, 'load_textdomain' ) );
+            add_action( 'init', array ($this, 'check_limit') );
+			add_action( 'wp_dashboard_setup', array ($this, 'add_dashboard') );
 			if ( is_multisite() ) { 
-				add_action( 'wp_network_dashboard_setup', array (&$this, 'add_dashboard') );
+				add_action( 'wp_network_dashboard_setup', array ($this, 'add_dashboard') );
 			}
-			add_filter( 'admin_footer_text', array (&$this, 'add_footer') );
+			add_filter( 'admin_footer_text', array ($this, 'add_footer') );
 		}
 		
 		private function getinput($fieldkey, $default="") {
@@ -47,7 +69,7 @@ if ( is_admin() ) {
 				! wp_verify_nonce( sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'memusage' )
 			) {
 				#echo "NONCE FAILED for GET $fieldkey<hr>";
-				return ""; #wp_die('Ung�ltiger Nonce � Sicherheits�berpr�fung fehlgeschlagen.');
+				return ""; #wp_die('Ung�ltiger Nonce � Sicherheits�berpr�fung fehlgeschlagen.');
 			}
 			#echo "NONCE OK for GET $fieldkey<hr>";
 			return sanitize_text_field(wp_unslash(($_GET[$fieldkey] ?? $default)));
@@ -56,6 +78,10 @@ if ( is_admin() ) {
 		private function getserverinput($fieldkey, $default="") {
 			return sanitize_text_field(wp_unslash(($_SERVER[$fieldkey] ?? $default)));
 		}
+		
+        #public function load_textdomain() {
+		#	load_plugin_textdomain( 'wp-memory-usage', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		#}
 		
         public function check_limit() {
 			$this->memory['phplimit'] = "";
@@ -77,7 +103,7 @@ if ( is_admin() ) {
 			$this->memory["wpmaxunity"] = $ret["unity"]  ?? '';
         }
 		
-		private function check_memory_usage() {
+		public function check_memory_usage() {
 			$this->memory['usage'] = function_exists('memory_get_peak_usage') ? round(memory_get_peak_usage(true) / 1024 / 1024, 2) : 0;
 			if ( !empty($this->memory['usage'])) {
 				$this->memory['percent'] = -1;
@@ -90,7 +116,7 @@ if ( is_admin() ) {
 					$this->memory['percentphp'] = round ($this->memory['usage'] / $this->memory["phplimit"] * 100, 0);
 				}
 				
-				//If the bar is tp small we move the text outside
+				//If the bar is too small we move the text outside
                 $this->memory['percent_pos'] = '';
                 //In case we are in our limits take the admin color 
                 $this->memory['color'] = '';
@@ -135,7 +161,7 @@ if ( is_admin() ) {
 						$mem = $this->memory['usage'] ?? 0;
 						echo esc_html(__('Current Memory usage', 'wp-memory-usage')); ?>:</strong> <span><?php echo esc_html($mem.__('MB', 'wp-memory-usage')); ?> </span><br>
 
-				<?PHP	
+				<?php	
 					if ($this->memory['percent']>=0) {
 					?>
 				<div class="progressbar">
@@ -145,247 +171,63 @@ if ( is_admin() ) {
 						</div>
 					</div>
 				</div>
-				<?php } ?>
-						
-<!-- START measure memory 				-->
-						<hr>
-						<?PHP
-							echo '<strong>'.esc_html(__('Multiple Memory Measurement: Reload page and measure memory', 'wp-memory-usage')).'</strong><br>';
-							echo esc_html(__('You might switch off some plugins to check, which plugin consumes significant memory.', 'wp-memory-usage'))."<br>";
-							
-							$cst = $this->getinput("c", "");
-							#$cst = $_GET["c"] ?? '';
-							$cst = htmlspecialchars($cst);
-							
-							$ac = $this->getinput("ac", "");
-							#$ac = $_GET["ac"] ?? '';
-							#$ac = htmlspecialchars($ac);
-
-							$wpmemoryusage_settings_str = get_option('wpmemoryusage_settings') ?? '';
-							$wpmemoryusage_settings = json_decode($wpmemoryusage_settings_str, TRUE);
-
-							$nonceCheck = TRUE;
-							if (
-								! isset($_GET['_wpnonce']) ||
-								! wp_verify_nonce( sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'memusage' )
-							) {
-								$nonceCheck = FALSE;
-							}
-							if ($nonceCheck || is_null($wpmemoryusage_settings)) {
-								$nomeas = $this->getinput("nomeas", "");
-								#$nomeas = $_GET["nomeas"] ?? '';
-								$validatedValue_nomeas = filter_input(INPUT_GET, 'nomeas', FILTER_VALIDATE_INT);
-								if ($validatedValue_nomeas && $nomeas>0) { 
-									$wpmemoryusage_settings["nomeas"] = $nomeas; 
-								} else if ($cst!="st" && $ac!="stop") {
-									$wpmemoryusage_settings["nomeas"] = 2; 
-								}
-								if ($wpmemoryusage_settings["nomeas"]>2000) {
-									$wpmemoryusage_settings["nomeas"] = 2000;
-								}
-
-								$secrel = $this->getinput("secrel", "");
-								#$secrel = $_GET["secrel"] ?? '';
-								$validatedValue_secrel = filter_input(INPUT_GET, 'secrel', FILTER_VALIDATE_INT);
-								if ($validatedValue_secrel && $secrel>0) { 
-									$wpmemoryusage_settings["secrel"] = $secrel; 
-								} else if ($cst!="st" && $ac!="stop") {
-									$wpmemoryusage_settings["secrel"] = 1000; 
-								}
-								$memOptSave = update_option('wpmemoryusage_settings', json_encode($wpmemoryusage_settings));
-							}
-
-							echo "<form action=".esc_url(admin_url()).">";
-							wp_nonce_field( "memusage" );
-							echo esc_html(__('Number of measuring points', 'wp-memory-usage')).': <input type=number name=nomeas value="'.esc_attr($wpmemoryusage_settings["nomeas"]).'"><br>';
-							echo esc_html(__('Milliseconds between page reloads', 'wp-memory-usage')).': <input type=number name=secrel value="'.esc_attr($wpmemoryusage_settings["secrel"]).'"><br>';
-							echo '<input type=submit value="'.esc_html(__('Store settings', 'wp-memory-usage')).'">';
-							echo "</form><hr>";
-
-							# for test only
-							#$this->memory["wpmb"]= 30;
-
-							$z = 1;
-							$validatedValue_z = filter_input(INPUT_GET, 'meme', FILTER_VALIDATE_INT);
-							if ($validatedValue_z && $validatedValue_z>0) { 
-								$z = $this->getinput("meme");
-								#$z = $_GET["meme"];
-							}
-							
-							if ($z==1) {
-								$memOptSave = update_option('wpmemoryusage_emopt', array());
-							}
-							$memOpt = get_option('wpmemoryusage_emopt', array());
-							$anzpoints = count($memOpt);
-							$now = time();
-							$summb = 0;
-							$anz = 0;
-
-							$ha = array();
-							if ($anzpoints>0) {
-								krsort($memOpt);
-								foreach ($memOpt as $key => $value) {
-									$value = intval($value + 0.5);
-									$ha[$value] = $ha[$value] ?? 0;
-									$ha[$value]++;
-									$summb += $value;
-									$anz++;
-								}
-								$av = $summb/$anz;
-							}
-					
-							$colgreen = "#d9ead3";
-							$colred = "#f4cccc";
-							
-							if ($cst=="st" && $wpmemoryusage_settings["nomeas"]==$anz) {
-								echo '<a href='.esc_url(wp_nonce_url(admin_url().'?c=st', 'memusage')).'>'.esc_html(__('Restart Measurement', 'wp-memory-usage')).'</a><hr>';
-							} else if ($cst=="st" && $wpmemoryusage_settings["nomeas"]!=$anz) {
-								echo '<a href='.esc_url(wp_nonce_url(admin_url().'?ac=stop', 'memusage')).'>'.esc_html(__('Stop Measurement', 'wp-memory-usage')).'</a><hr>';
-							} else {
-								echo '<a href='.esc_url(wp_nonce_url(admin_url().'?c=st', 'memusage')).'>'.esc_html(__('Start Measurement', 'wp-memory-usage')).'</a><hr>';
-							}
-					
-						$error_WP_MEMORY_LIMIT_not_set = esc_html(__('WP_MEMORY_LIMIT not set', 'wp-memory-usage'));
-						$error_WP_MAX_MEMORY_LIMIT_not_set = esc_html(__('WP_MAX_MEMORY_LIMIT not set', 'wp-memory-usage'));  
-						
-						if ($anz>0) {
-							echo "<table border=1 width=100%>";
-							$mp = round($anz/$wpmemoryusage_settings["nomeas"]*1000)/10;
-							if ($mp<100) {	$colli = $colred;	} else { $colli = $colgreen; }
-							echo "<tr bgcolor=".esc_attr($colli)."><td colspan=3>";
-							echo esc_html(__('Number of measuring points', 'wp-memory-usage'))." ";
-							if ($wpmemoryusage_settings["nomeas"]>0) {
-								echo esc_html($mp.__('% (', 'wp-memory-usage'));
-							}
-							echo esc_html($anz);
-							echo " ".esc_html(__('of', 'wp-memory-usage'))." ";
-							echo esc_html($wpmemoryusage_settings["nomeas"]);
-							if ($wpmemoryusage_settings["nomeas"]>0) {
-								echo esc_html(__(')', 'wp-memory-usage'));
-							}
-							echo "</td></tr>";
-
-							echo "<tr bgcolor=#cfe2f3><td>";
-							echo esc_html(__('Used MB', 'wp-memory-usage'));
-							echo "</td><td>";
-							if (empty($this->memory["wpmb"])) {
-								echo esc_html($error_WP_MEMORY_LIMIT_not_set);
-							} else {
-								/* translators: 1: Memory Limit in MB */
-								$translatable_string = __('MB (max. %s)', 'wp-memory-usage');
-								$formatted_string = sprintf($translatable_string, esc_html($this->memory["wpmb"]. $this->memory["wpunity"]));
-								echo esc_html($formatted_string);
-							}
-							echo "</td><td>";
-							echo esc_html(__('%MB', 'wp-memory-usage'));
-							echo "</td></tr>";
-						
-							$val = round($summb/$anz); 
-							$valproz = -1;
-							if ($this->memory["wpmb"]>0) {
-								$valproz = round($val/$this->memory["wpmb"]*1000)/10; 
-							} 
-							if ($valproz>0 && $valproz<100) {	$colli = $colgreen;	} else { $colli = $colred; }
-							echo "<tr bgcolor=".esc_attr($colli)."><td>";
-							echo esc_html(__('Average MB', 'wp-memory-usage'));
-							echo "</td><td>";
-							echo esc_html($val);
-							echo "</td><td>";
-							if ($valproz>0) {
-								echo esc_html($valproz.__('%', 'wp-memory-usage'));
-							} else {
-								echo esc_html($error_WP_MEMORY_LIMIT_not_set);
-							}
-							echo "</td></tr>";
-							
-							$val = min($memOpt); 
-							$valproz = -1;
-							if ($this->memory["wpmb"]>0) {
-								$valproz = round($val/$this->memory["wpmb"]*1000)/10; 
-							}
-							if ($valproz>0 && $valproz<100) {	$colli = $colgreen;	} else { $colli = $colred; }
-							echo "<tr bgcolor=".esc_attr($colli)."><td>";
-							echo esc_html(__('Min MB', 'wp-memory-usage'));
-							echo "</td><td>";
-							echo esc_html($val);
-							echo "</td><td>";
-							if ($valproz>0) {
-								echo esc_html($valproz.__('%', 'wp-memory-usage'));
-							} else {
-								echo esc_html($error_WP_MEMORY_LIMIT_not_set);
-							}
-							echo "</td></tr>";
-
-							$val = max($memOpt); 
-							$valproz = -1;
-							if ($this->memory["wpmb"]>0) {
-								$valproz = round($val/$this->memory["wpmb"]*1000)/10; 
-							}
-							if ($valproz>0 && $valproz<100) {	$colli = $colgreen;	} else { $colli = $colred; }
-							if ($valproz<100) {	$colli = $colgreen;	} else { $colli = $colred; }
-							echo "<tr bgcolor=".esc_attr($colli)."><td>";
-							echo esc_html(__('Max MB', 'wp-memory-usage'));
-							echo "</td><td>";
-							echo esc_html($val);
-							echo "</td><td>";
-							if ($valproz>0) {
-								echo esc_html($valproz.__('%', 'wp-memory-usage'));
-							} else {
-								echo esc_html($error_WP_MEMORY_LIMIT_not_set);
-							}
-							echo "</td></tr>";
-
-							if (count($ha)>0) {
-								krsort($ha);
-								echo "<tr bgcolor=#cfe2f3><td>";
-								echo esc_html(__('MB', 'wp-memory-usage'));
-								echo "</td><td colspan=2>";
-								echo esc_html(__('Occurrence', 'wp-memory-usage'));
-								echo "</td></tr>";
-								foreach ($ha as $key => $value) {
-									$valproz = -1;
-									if ($this->memory["wpmb"]>0) {
-										$valproz = round($key/$this->memory["wpmb"]*1000)/10; 
-									}
-									if ($valproz>0 && $valproz<100) {	$colli = $colgreen;	} else { $colli = $colred; }
-									echo "<tr bgcolor=".esc_attr($colli)."><td>";
-									echo esc_html($key);
-									echo "</td><td colspan=2>";
-									echo esc_html($value);
-									echo "</td></tr>";
-								}
-							}
-							echo "</table>";
+				<?php } 
+				
+				$settings_url = admin_url( 'options-general.php?page=wpmu-memory-alerts' );
+				echo '<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Settings & Monitor', 'wp-memory-usage' ) . '</a>';
+				#echo $settings_link;
+				
+				// ── Neuester Digest ────────────────────────────────────────────
+				if ( class_exists( 'WPMU_Threshold_Alerts' ) ) {
+					$digest_files = glob( ABSPATH . '../logs/wpmu/digest_*.cgibak' ) ?: array();
+					if ( ! empty( $digest_files ) ) {
+						// neueste Datei
+						usort( $digest_files, fn( $a, $b ) => filemtime( $b ) - filemtime( $a ) );
+						$latest = $digest_files[0];
+						// phpcs:disable WordPress.WP.AlternativeFunctions
+						$fh = @fopen( $latest, 'rb' );
+						$digest_data = null;
+						if ( $fh ) {
+							flock( $fh, LOCK_SH );
+							$digest_data = json_decode( fgets( $fh ), true );
+							flock( $fh, LOCK_UN );
+							fclose( $fh );
 						}
-						if ($mem>0) {
-							$memOpt[$now] = $mem;
-							krsort($memOpt);
-							$memOpt = array_slice($memOpt, 0, $wpmemoryusage_settings["nomeas"], TRUE);
-							$memOptSave = update_option('wpmemoryusage_emopt', $memOpt);
+						// phpcs:enable WordPress.WP.AlternativeFunctions						
+						if ( is_array( $digest_data ) && isset( $digest_data['status'] ) ) {
+							$dw = (int) ( $digest_data['status']['warn']     ?? 0 );
+							$dd = (int) ( $digest_data['status']['danger']   ?? 0 );
+							$dc = (int) ( $digest_data['status']['critical'] ?? 0 );
+							$fn_label = basename( $latest );
+							$raw_ts   = str_replace( array( 'digest_', '.cgibak' ), '', $fn_label );
+							$dt_obj   = DateTime::createFromFormat( 'Y-m-d-H-i-s', $raw_ts );
+							$ts_label = $dt_obj ? wp_date( get_option('date_format') . ', ' . get_option('time_format'), $dt_obj->getTimestamp() ) : $fn_label;
+							echo '<hr style="margin:8px 0;">';
+							echo '<strong>' . esc_html__( 'Latest Digest', 'wp-memory-usage' ) . ':</strong> <span style="font-size:11px;color:#888;">' . esc_html( $ts_label ) . '</span><br>';
+							#$any_alert = ( $dw + $dd + $dc ) > 0;
+							echo '<span style="display:inline-flex;gap:6px;margin-top:4px;flex-wrap:wrap;">';
+							echo '<span style="background:' . esc_attr( $dw  > 0 ? '#f0ad4e' : '#e8e8e8' ) . ';color:' . esc_attr( $dw  > 0 ? '#3d2b00' : '#888' ) . ';padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700;">⚠ ' . esc_html($dw)  . '</span>';
+							echo '<span style="background:' . esc_attr( $dd  > 0 ? '#d9534f' : '#e8e8e8' ) . ';color:' . esc_attr( $dd  > 0 ? '#fff'    : '#888' ) . ';padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700;">🔴 ' . esc_html($dd)  . '</span>';
+							echo '<span style="background:' . esc_attr( $dc  > 0 ? '#8B0000' : '#e8e8e8' ) . ';color:' . esc_attr( $dc  > 0 ? '#fff'    : '#888' ) . ';padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700;">🆘 ' . esc_html($dc)  . '</span>';
+							echo '</span>';
+							$digest_url = admin_url( 'options-general.php?page=wpmu-memory-alerts&tab=digest' );
+							echo ' &nbsp;<a href="' . esc_url( $digest_url ) . '" style="font-size:11px;">' . esc_html__( '→ Digest', 'wp-memory-usage' ) . '</a>';
 						}
+					}
+				}
+				?>
 
-							if ($anzpoints < $wpmemoryusage_settings["nomeas"] && $cst=="st") {
-								$next = 1+$z;
-								echo "<script>";
-								#echo 'setTimeout(function() {window.location.assign("'.esc_url(admin_url()).'?c=st&meme='.esc_html($next).'");}, '.esc_html($wpmemoryusage_settings["secrel"]).');';
-								echo 'setTimeout(
-									function() {
-										window.location.assign("'.esc_url(wp_nonce_url(admin_url(), 'memusage')).'&c=st&meme='.esc_attr($next).'");}, '.esc_html($wpmemoryusage_settings["secrel"]).');';
-								echo "</script>";
-								#echo '<a href="javascript:newDoc()">jump '.$next.'</a><hr>';
-							}
+						
 
-					?>
-					</span>
-<!-- END measure memory 				-->
 					</li>
 				</ul>
 			<?php
 		}
 		 
 		public function add_dashboard() {
-			$servertime = gmdate(__('d.m.Y, H:i:s', 'wp-memory-usage'));
-			wp_add_dashboard_widget( 'wp_memory_dashboard', __('Memory Overview', 'wp-memory-usage')."<br>".__('Servertime', 'wp-memory-usage').": ".$servertime, array (&$this, 'dashboard_output') );
+			#$servertime = gmdate(__('d.m.Y, H:i:s', 'wp-memory-usage'));
+			$servertime = wp_date( get_option('date_format') . ', ' . get_option('time_format') );			
+			wp_add_dashboard_widget( 'wp_memory_dashboard', __('Memory Overview', 'wp-memory-usage')."<br>".__('Servertime', 'wp-memory-usage').": ".$servertime, array ($this, 'dashboard_output') );
 		}
 		
 		private function formatWP_MEMORY_LIMIT($valin) { #WP_MEMORY_LIMIT and WP_MAX_MEMORY_LIMIT come with size and unity
@@ -401,7 +243,7 @@ if ( is_admin() ) {
 			}
 			$size  = strtolower(substr($valin, -1));
 	       	$number = (int) substr($valin, 0, -1);
-			$ret = Array();
+			$ret = array();
 			if ($size=="k") { $ret["mb"] = ($number/1024); $ret["unity"] = "kB"; }
 			if ($size=="m") { $ret["mb"] = $number; $ret["unity"] = "MB"; }
 			if ($size=="g") { $ret["mb"] = ($number*1024); $ret["unity"] = "GB"; }
@@ -410,7 +252,7 @@ if ( is_admin() ) {
 			return $ret;
 		}
 
-		private function get_ip_adress() {
+		private function get_ip_address() {
 			$get_SERVER_ADDR = $this->getserverinput('SERVER_ADDR');
 			#if (isset($_SERVER[ 'SERVER_ADDR' ]) && !empty($_SERVER[ 'SERVER_ADDR' ])) {
 			if (!empty($get_SERVER_ADDR)) {
@@ -426,26 +268,42 @@ if ( is_admin() ) {
 			
 			$get_SERVER_NAME = $this->getserverinput('SERVER_NAME');
 			if (!empty($get_SERVER_NAME)) {
-			#if (!empty($_SERVER['SERVER_NAME'])) {
-				$this->servername = " (".$get_SERVER_NAME.")";
-				#$this->servername = " (".$_SERVER['SERVER_NAME'].")";
+				$this->servername = $get_SERVER_NAME;
+				$this->servernameout = " (".$get_SERVER_NAME.")";
 			}
 		}
 
 		public function add_footer($content) {
 			$this->check_memory_usage();
-			$content .= ' | '. __( 'WP Memory Limit:', 'wp-memory-usage'). ' ' . $this->memory['usage'] . ' ' . __( 'of', 'wp-memory-usage') . ' ' . $this->memory["wpmb"].$this->memory["wpunity"]. " (".$this->memory['percent']."%)";
-			$content .= ' | '. __( 'PHP Memory Limit:', 'wp-memory-usage'). ' ' . $this->memory['usage'] . ' ' . __( 'of', 'wp-memory-usage') . ' ' . $this->memory['phplimit'].$this->memory['phplimitunity']. " (".$this->memory['percentphp']."%)";
-			$content .= ' | '. __( 'IP-Address', 'wp-memory-usage') . " " . $this->servername. ': '.$this->ipadr;
-			$content .= ' | '. __( 'PHP', 'wp-memory-usage') . ": " . PHP_VERSION;
+			$content .= ' | '. __( 'WP Memory Limit:', 'wp-memory-usage'). ' ' . esc_html($this->memory['usage']) . ' ' . __( 'of', 'wp-memory-usage') . ' ' . esc_html($this->memory["wpmb"]).esc_html($this->memory["wpunity"]). " (".esc_html($this->memory['percent'])."%)";
+			$content .= ' | '. __( 'PHP Memory Limit:', 'wp-memory-usage'). ' ' . esc_html($this->memory['usage']) . ' ' . __( 'of', 'wp-memory-usage') . ' ' . esc_html($this->memory['phplimit']).esc_html($this->memory['phplimitunity']). " (".esc_html($this->memory['percentphp'])."%)";
+			$content .= ' | '. __( 'IP-Address', 'wp-memory-usage') . " " . esc_html($this->servernameout). ': '.esc_html($this->ipadr);
+			$content .= ' | '. __( 'PHP', 'wp-memory-usage') . ": " . esc_html(PHP_VERSION);
 			return $content;
 		}
 
 	}
 
 	// Start this plugin once all other plugins are fully loaded
+if ( is_admin() ) {
     function WP_Memory_Usage_action_plugins_loaded( $array ) { 
 		return new wp_memory_usage();
     }; 
     add_action( 'plugins_loaded', 'WP_Memory_Usage_action_plugins_loaded', 10, 1 ); 	
 }
+
+
+if ( file_exists( plugin_dir_path( __FILE__ ) . 'includes/threshold-alerts.php' ) ) { #load WPMU_Threshold_Alerts
+	require_once plugin_dir_path( __FILE__ ) . 'includes/threshold-alerts.php';
+	if ( class_exists( 'WPMU_Threshold_Alerts' ) ) {
+		WPMU_Threshold_Alerts::init(25, 100, WPMU_LOG_PATH);
+	}
+}
+
+// Add Settings link in Plugins list
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function( $links ) {  # insert link in plugin list
+	$settings_url = admin_url( 'options-general.php?page=wpmu-memory-alerts' );
+	$settings_link = '<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Settings & Monitor', 'wp-memory-usage' ) . '</a>';
+	$links[] = $settings_link;
+	return $links;
+} );
