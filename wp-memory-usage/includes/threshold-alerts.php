@@ -93,7 +93,12 @@ final class WPMU_Threshold_Alerts {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 		WP_Filesystem();
-		$wp_filesystem->move( $file, $backup, true ); // true = overwrite falls Ziel existiert
+		#$wp_filesystem->move( $file, $backup, true ); // true = overwrite falls Ziel existiert
+		if ( $wp_filesystem->exists( $file ) ) {
+			if ( ! $wp_filesystem->move( $file, $backup, true ) ) {
+				error_log( 'File move failed: ' . $file );
+			}
+		}
 		#rename( $file, $backup ); # first rename, close this file
 
 		#error_log("cron_cleanup: $file");
@@ -1052,16 +1057,16 @@ final class WPMU_Threshold_Alerts {
 						'text' => __('Could not determine the effective memory limit. Check that WP_MEMORY_LIMIT or PHP memory_limit are set.', 'wp-memory-usage') );
 				} elseif ( $effective_mb < 64 ) {
 					$recs[] = array( 'icon' => '🆘', 'color' => '#8B0000', 'bg' => '#fdf2f2',
-						'text' => __('Effective limit is very low:', 'wp-memory-usage').$effective_mb.' MB.'.__('Most WordPress sites need at least 128 MB; WooCommerce, page builders or heavy plugins often need 256 MB or more. You will likely see out-of-memory errors.', 'wp-memory-usage') );
+						'text' => __('Effective limit is very low:', 'wp-memory-usage').' '.$effective_mb.' MB. '.__('Most WordPress sites need at least 128 MB; WooCommerce, page builders or heavy plugins often need 256 MB or more. You will likely see out-of-memory errors.', 'wp-memory-usage') );
 				} elseif ( $effective_mb < 128 ) {
 					$recs[] = array( 'icon' => '⚠️', 'color' => '#7a5200', 'bg' => '#fef9ec',
-						'text' => __('Effective limit is', 'wp-memory-usage').' {'.($effective_mb).' MB.'.__('Tight for a typical WordPress site. Consider raising to at least 128 MB (256 MB recommended). Add to wp-config.php: define(\'WP_MEMORY_LIMIT\', \'256M\');', 'wp-memory-usage') );
+						'text' => __('Effective limit is', 'wp-memory-usage').' '.($effective_mb).' MB. '.__('Tight for a typical WordPress site. Consider raising to at least 128 MB (256 MB recommended). Add to wp-config.php: define(\'WP_MEMORY_LIMIT\', \'256M\');', 'wp-memory-usage') );
 				} elseif ( $effective_mb < 256 ) {
 					$recs[] = array( 'icon' => '✅', 'color' => '#2d6a2d', 'bg' => '#f2faf2',
-						'text' => __('Effective limit is', 'wp-memory-usage').' {'.($effective_mb).' MB.'.__('Acceptable for most sites. For WooCommerce, LMS or heavy builders, 256 MB+ is better.', 'wp-memory-usage') );
+						'text' => __('Effective limit is', 'wp-memory-usage').' '.($effective_mb).' MB. '.__('Acceptable for most sites. For WooCommerce, LMS or heavy builders, 256 MB+ is better.', 'wp-memory-usage') );
 				} else {
 					$recs[] = array( 'icon' => '✅', 'color' => '#2d6a2d', 'bg' => '#f2faf2',
-						'text' => __('Effective limit is', 'wp-memory-usage').' ('.($effective_mb).' MB.'.__('Good.', 'wp-memory-usage') );
+						'text' => __('Effective limit is', 'wp-memory-usage').' '.($effective_mb).' MB. '.__('Good.', 'wp-memory-usage') );
 				}
 
 				// PHP vs WP Limit-Verhältnis

@@ -3,8 +3,8 @@ Contributors: berkux
 Tags: memory, usage, server, php, admin
 Requires at least: 5.3
 Requires PHP: 7.4
-Tested up to: 6.9.1
-Stable tag: 2.0.0
+Tested up to: 6.9
+Stable tag: 2.0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,6 +83,9 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 
 == Changelog ==
 
+= 2.0.1 =
+* Fix: If nothing is created, no filerotation is needed
+
 = 2.0.0 =
 * New: Admin-Backend Tab Settings, History, Digest, Actions, Memory Thresholds, Check Installation
 * Improved: Dashboard widget shows latest digest status badges (warn / danger / critical)
@@ -112,10 +115,8 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 
 == Upgrade Notice ==
 
-= 2.0.0 =
-* New: Admin-Backend Tab Settings, History, Digest, Actions, Memory Thresholds, Check Installation
-* Improved: Dashboard widget shows latest digest status badges (warn / danger / critical)
-* Removed: Manual "Multiple Memory Measurement"
+= 2.0.1 =
+* Fix: If nothing is created, no filerotation is needed
 
 == Credits ==
 
