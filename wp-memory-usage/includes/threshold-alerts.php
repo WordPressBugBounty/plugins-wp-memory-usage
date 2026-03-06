@@ -1431,18 +1431,33 @@ final class WPMU_Threshold_Alerts {
 						<thead><tr><th><?php echo esc_html__( 'Status', 'wp-memory-usage' ); ?></th><th><?php echo esc_html__( 'Occurrences', 'wp-memory-usage' ); ?></th></tr></thead>
 						<tbody>
 						<?php foreach ( $data['status'] as $s => $count ) :
+							$color = '#5cb85c';
+							if ( $s === 'warn' )          { $color = '#f0ad4e'; }
+							elseif ( $s === 'danger' )    { $color = '#d9534f'; }
+							elseif ( $s === 'critical' )  { $color = '#8B0000'; }
+							else                          { $color = '#5cb85c'; }
+							/*
 							$color = match( $s ) {
 								'warn'     => '#f0ad4e',
 								'danger'   => '#d9534f',
 								'critical' => '#8B0000',
 								default    => '#5cb85c',
 							};
+							*/
+
+							/*
 							$outtxt = match( $s ) {
 								'warn'     => __('warn', 'wp-memory-usage' ),
 								'danger'   => __('danger', 'wp-memory-usage' ),
 								'critical' => __('critical', 'wp-memory-usage' ),
 								default    => __('ok', 'wp-memory-usage' ),
 							};
+							*/
+							$outtxt = __('ok',       'wp-memory-usage');
+							if ( $s === 'warn' )          { $outtxt = __('warn',     'wp-memory-usage'); }
+							elseif ( $s === 'danger' )    { $outtxt = __('danger',   'wp-memory-usage'); }
+							elseif ( $s === 'critical' )  { $outtxt = __('critical', 'wp-memory-usage'); }
+							else                          { $outtxt = __('ok',       'wp-memory-usage'); }
 						?>
 						<tr>
 							<td><strong style="color:<?php echo esc_html($color); ?>"><?php echo esc_html(strtoupper( $outtxt )); ?></strong></td>

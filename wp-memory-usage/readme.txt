@@ -4,7 +4,7 @@ Tags: memory, usage, server, php, admin
 Requires at least: 5.3
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,6 +83,9 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 
 == Changelog ==
 
+= 2.0.2 =
+* Improved: Replaced PHP 8 syntax (match expressions) with PHP 7 compatible code for broader server compatibility
+
 = 2.0.1 =
 * Fix: If nothing is created, no filerotation is needed
 
@@ -115,8 +118,8 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 
 == Upgrade Notice ==
 
-= 2.0.1 =
-* Fix: If nothing is created, no filerotation is needed
+= 2.0.2 =
+* Improved: Replaced PHP 8 syntax (match expressions) with PHP 7 compatible code for broader server compatibility
 
 == Credits ==
 
