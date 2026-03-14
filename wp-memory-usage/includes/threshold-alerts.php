@@ -96,7 +96,7 @@ final class WPMU_Threshold_Alerts {
 		#$wp_filesystem->move( $file, $backup, true ); // true = overwrite falls Ziel existiert
 		if ( $wp_filesystem->exists( $file ) ) {
 			if ( ! $wp_filesystem->move( $file, $backup, true ) ) {
-				error_log( 'File move failed: ' . $file );
+				#error_log( 'File move failed: ' . $file );
 			}
 		}
 		#rename( $file, $backup ); # first rename, close this file
@@ -991,7 +991,7 @@ final class WPMU_Threshold_Alerts {
 		if ( isset( $_GET['tab'], $_GET['_wpmu_tab_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpmu_tab_nonce'] ) ), 'wpmu_tab_nav' ) ) {
 			$tab = sanitize_key( wp_unslash( $_GET['tab'] ) );
 		}
-		if ( ! in_array( $tab, array( 'settings', 'current', 'actions', 'digest', 'history', 'check_installation' ), true ) ) {
+		if ( ! in_array( $tab, array( 'settings', 'current', 'actions', 'digest', 'history', 'check_installation', 'diagnose' ), true ) ) {
 			$tab = 'history';
 		}
 		$page_url  = admin_url( 'options-general.php?page=wpmu-memory-alerts' );
@@ -1006,6 +1006,7 @@ final class WPMU_Threshold_Alerts {
 					'history'            => esc_html__( '📋 History',             'wp-memory-usage' ),
 					'digest'             => esc_html__( '📊 Digest',              'wp-memory-usage' ),
 					'actions'            => esc_html__( '🛠️ Actions',            'wp-memory-usage' ),
+					'diagnose'           => esc_html__( '🩺 Diagnose',            'wp-memory-usage' ),
 					'current'            => esc_html__( '📏 Memory Thresholds',   'wp-memory-usage' ),
 					'check_installation' => esc_html__( '🔍 Check Installation',  'wp-memory-usage' ),
 				);
@@ -1436,23 +1437,7 @@ final class WPMU_Threshold_Alerts {
 							elseif ( $s === 'danger' )    { $color = '#d9534f'; }
 							elseif ( $s === 'critical' )  { $color = '#8B0000'; }
 							else                          { $color = '#5cb85c'; }
-							/*
-							$color = match( $s ) {
-								'warn'     => '#f0ad4e',
-								'danger'   => '#d9534f',
-								'critical' => '#8B0000',
-								default    => '#5cb85c',
-							};
-							*/
 
-							/*
-							$outtxt = match( $s ) {
-								'warn'     => __('warn', 'wp-memory-usage' ),
-								'danger'   => __('danger', 'wp-memory-usage' ),
-								'critical' => __('critical', 'wp-memory-usage' ),
-								default    => __('ok', 'wp-memory-usage' ),
-							};
-							*/
 							$outtxt = __('ok',       'wp-memory-usage');
 							if ( $s === 'warn' )          { $outtxt = __('warn',     'wp-memory-usage'); }
 							elseif ( $s === 'danger' )    { $outtxt = __('danger',   'wp-memory-usage'); }
@@ -2174,6 +2159,155 @@ final class WPMU_Threshold_Alerts {
 					<?php endforeach; ?>
 					</tbody>
 				</table>
+
+			<?php elseif ( 'diagnose' === $tab ) :
+				// ── Collect diagnostic data ──────────────────────────────────
+				$diag_rows = array();
+
+				// Memory
+				$diag_rows[] = array( 'key' => 'memory_limit',                'value' => ini_get('memory_limit'),                                       'note' => 'PHP memory limit' );
+				$diag_rows[] = array( 'key' => 'memory_get_usage()',           'value' => self::format_bytes( memory_get_usage(true) ),                   'note' => 'Currently allocated' );
+				$diag_rows[] = array( 'key' => 'memory_get_peak_usage(real)',  'value' => self::format_bytes( memory_get_peak_usage(true) ),               'note' => 'Peak (OS-allocated)' );
+				$diag_rows[] = array( 'key' => 'memory_get_peak_usage()',      'value' => self::format_bytes( memory_get_peak_usage(false) ),              'note' => 'Peak (actually used)' );
+				$diag_rows[] = array( 'key' => 'WP_MEMORY_LIMIT',              'value' => defined('WP_MEMORY_LIMIT') ? WP_MEMORY_LIMIT : 'n/a',           'note' => 'WordPress memory limit' );
+				$diag_rows[] = array( 'key' => 'WP_MAX_MEMORY_LIMIT',          'value' => defined('WP_MAX_MEMORY_LIMIT') ? WP_MAX_MEMORY_LIMIT : 'n/a',   'note' => 'WordPress admin memory limit' );
+
+				// OPcache
+				$diag_rows[] = array( 'key' => 'opcache.enable',                'value' => ini_get('opcache.enable') ? 'On' : 'Off',                     'note' => '' );
+				$diag_rows[] = array( 'key' => 'opcache.enable_cli',             'value' => ini_get('opcache.enable_cli') ? 'On' : 'Off',                 'note' => '' );
+				$diag_rows[] = array( 'key' => 'opcache.memory_consumption',     'value' => ini_get('opcache.memory_consumption') . ' MB',                'note' => 'Reserved shared memory' );
+				$diag_rows[] = array( 'key' => 'opcache.interned_strings_buffer','value' => ini_get('opcache.interned_strings_buffer') . ' MB',            'note' => 'String buffer' );
+				$diag_rows[] = array( 'key' => 'opcache.max_accelerated_files',  'value' => ini_get('opcache.max_accelerated_files'),                     'note' => 'Max. cached files' );
+				$diag_rows[] = array( 'key' => 'opcache.save_comments',          'value' => ini_get('opcache.save_comments') ? 'On' : 'Off',              'note' => 'Required for annotations' );
+				if ( function_exists('opcache_get_status') ) {
+					$ocs = opcache_get_status(false);
+					if ( is_array($ocs) ) {
+						$diag_rows[] = array( 'key' => 'opcache cached_scripts', 'value' => $ocs['opcache_statistics']['num_cached_scripts'] ?? 'n/a',    'note' => 'Currently cached scripts' );
+						$diag_rows[] = array( 'key' => 'opcache memory_used',    'value' => self::format_bytes( $ocs['memory_usage']['used_memory'] ?? 0 ),'note' => '' );
+						$diag_rows[] = array( 'key' => 'opcache hit_rate',       'value' => round( $ocs['opcache_statistics']['opcache_hit_rate'] ?? 0, 2 ) . ' %', 'note' => '' );
+					}
+				}
+
+				// Garbage Collector
+				$diag_rows[] = array( 'key' => 'zend.enable_gc',    'value' => ini_get('zend.enable_gc') ? 'On' : 'Off', 'note' => 'Cyclic garbage collector' );
+				$diag_rows[] = array( 'key' => 'gc_enabled()',       'value' => gc_enabled() ? 'true' : 'false',           'note' => 'GC active at runtime?' );
+				$diag_rows[] = array( 'key' => 'gc_collect_cycles()','value' => gc_collect_cycles() . ' cycles',           'note' => 'Manually collected' );
+
+				// Extensions
+				foreach ( array('xdebug','blackfire','newrelic','tideways','datadog') as $ext ) {
+					$loaded = extension_loaded($ext);
+					$diag_rows[] = array(
+						'key'   => $ext,
+						'value' => $loaded ? 'loaded' : 'not loaded',
+						'note'  => ( $loaded && $ext === 'xdebug' ) ? 'Increases RAM by 20-30 MB!' : '',
+					);
+				}
+				$diag_rows[] = array( 'key' => 'Loaded extensions', 'value' => count(get_loaded_extensions()), 'note' => 'More extensions = higher base RAM' );
+
+				// General
+				$diag_rows[] = array( 'key' => 'PHP Version',         'value' => PHP_VERSION,                               'note' => '' );
+				$diag_rows[] = array( 'key' => 'PHP SAPI',            'value' => PHP_SAPI,                                  'note' => 'e.g. fpm-fcgi' );
+				$diag_rows[] = array( 'key' => 'realpath_cache_size', 'value' => ini_get('realpath_cache_size'),             'note' => 'File path cache' );
+				$diag_rows[] = array( 'key' => 'realpath_cache_ttl',  'value' => ini_get('realpath_cache_ttl') . 's',        'note' => 'TTL of path cache' );
+				$diag_rows[] = array( 'key' => 'max_execution_time',  'value' => ini_get('max_execution_time') . 's',        'note' => '' );
+				$diag_rows[] = array( 'key' => 'display_errors',      'value' => ini_get('display_errors') ? 'On' : 'Off',  'note' => 'Should be Off on production' );
+				$diag_rows[] = array( 'key' => 'log_errors',          'value' => ini_get('log_errors') ? 'On' : 'Off',       'note' => '' );
+				$diag_rows[] = array( 'key' => 'PHP_INT_SIZE',        'value' => PHP_INT_SIZE . ' Bytes',                   'note' => '8 = 64-bit system' );
+
+				// ── Build prompt text ──────────────────────────────────────────
+				$prompt_lines   = array();
+				$prompt_lines[] = 'You are a PHP performance expert. Analyze the following PHP/WordPress diagnostic data:';
+				$prompt_lines[] = '';
+				$prompt_lines[] = '1. What stands out negatively (memory usage, configuration issues)?';
+				$prompt_lines[] = '2. What are the most likely causes of high RAM consumption?';
+				$prompt_lines[] = '3. Concrete optimization recommendations with exact php.ini settings.';
+				$prompt_lines[] = '4. If two PHP versions are being compared: explain the differences.';
+				$prompt_lines[] = '';
+				$prompt_lines[] = 'Respond in a structured way. Be precise and technical.';
+				$prompt_lines[] = '';
+				$prompt_lines[] = '=== DIAGNOSTIC DATA ===';
+				$prompt_lines[] = 'Date/Time:  ' . wp_date( 'Y-m-d H:i:s' );
+				$prompt_lines[] = 'WordPress:  ' . get_bloginfo('version');
+				$prompt_lines[] = 'Site URL:   ' . get_site_url();
+				$prompt_lines[] = '';
+				foreach ( $diag_rows as $r ) {
+					$line = $r['key'] . ': ' . $r['value'];
+					if ( ! empty( $r['note'] ) ) { $line .= '  // ' . $r['note']; }
+					$prompt_lines[] = $line;
+				}
+				$prompt_text = implode( "\n", $prompt_lines );
+				?>
+
+				<h2><?php echo esc_html__( '🩺 Diagnose', 'wp-memory-usage' ); ?></h2>
+				<p style="color:#555;max-width:720px;">
+					<?php echo esc_html__( 'Current PHP and WordPress memory settings. Use the button below to copy a ready-made AI prompt – all diagnostic data is already included. Paste it into ChatGPT, Claude, or any other AI.', 'wp-memory-usage' ); ?>
+				</p>
+
+				<table class="widefat striped" style="max-width:900px;margin-bottom:28px;font-family:monospace;font-size:12px;">
+					<thead>
+						<tr>
+							<th style="width:270px;"><?php echo esc_html__( 'Setting', 'wp-memory-usage' ); ?></th>
+							<th style="width:180px;"><?php echo esc_html__( 'Value', 'wp-memory-usage' ); ?></th>
+							<th><?php echo esc_html__( 'Note', 'wp-memory-usage' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+					<?php foreach ( $diag_rows as $r ) : ?>
+						<tr>
+							<td><code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;"><?php echo esc_html( $r['key'] ); ?></code></td>
+							<td><strong><?php echo esc_html( $r['value'] ); ?></strong></td>
+							<td style="color:#555;font-family:sans-serif;font-size:12px;"><?php echo esc_html( $r['note'] ); ?></td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+
+				<h3 style="margin-bottom:4px;">
+					🤖 <?php echo esc_html__( 'AI Prompt (Copy & Paste)', 'wp-memory-usage' ); ?>
+					<button type="button" id="wpmu-copy-btn" onclick="wpmuCopyPrompt()"
+						style="margin-left:14px;padding:6px 18px;background:#2271b1;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600;vertical-align:middle;">
+						📋 <?php echo esc_html__( 'Copy prompt', 'wp-memory-usage' ); ?>
+					</button>
+					<span id="wpmu-copy-ok" style="display:none;margin-left:10px;color:#2d6a2d;font-size:13px;font-weight:600;">
+						✓ <?php echo esc_html__( 'Copied to clipboard!', 'wp-memory-usage' ); ?>
+					</span>
+				</h3>
+				<p style="color:#666;font-size:12px;margin-top:2px;max-width:700px;">
+					<?php echo esc_html__( 'The prompt includes the task description and all diagnostic data. Just copy and paste it directly into an AI.', 'wp-memory-usage' ); ?>
+				</p>
+
+				<textarea id="wpmu-diag-prompt" readonly
+					style="width:100%;max-width:900px;height:360px;font-family:monospace;font-size:12px;line-height:1.6;padding:14px;background:#f8f9fa;border:1px solid #c3c4c7;border-radius:4px;resize:vertical;color:#1d2327;"
+				><?php echo esc_textarea( $prompt_text ); ?></textarea>
+
+				<script>
+				function wpmuCopyPrompt() {
+					var ta  = document.getElementById('wpmu-diag-prompt');
+					var btn = document.getElementById('wpmu-copy-btn');
+					var ok  = document.getElementById('wpmu-copy-ok');
+					var resetBtn = function() {
+						btn.innerHTML = '📋 <?php echo esc_js( __( 'Copy prompt', 'wp-memory-usage' ) ); ?>';
+						ok.style.display = 'none';
+					};
+					ta.select();
+					ta.setSelectionRange(0, 99999);
+					if ( navigator.clipboard && navigator.clipboard.writeText ) {
+						navigator.clipboard.writeText(ta.value).then(function() {
+							ok.style.display = 'inline';
+							btn.innerHTML = '✓';
+							setTimeout(resetBtn, 2500);
+						}).catch(function() {
+							document.execCommand('copy');
+							ok.style.display = 'inline';
+							setTimeout(resetBtn, 2500);
+						});
+					} else {
+						document.execCommand('copy');
+						ok.style.display = 'inline';
+						setTimeout(resetBtn, 2500);
+					}
+				}
+				</script>
 
 			<?php endif; ?>
 		</div>
