@@ -348,6 +348,11 @@ final class WPMU_Threshold_Alerts {
 	private static function update_file( $opts, $filename ) {
 		if (empty($filename)) { return NULL; }
 		$dir = self::WPMU_LOG_PATH;
+
+		if (!is_dir($dir) || !is_writable($dir)) {
+			return false;
+		}
+
 		#error_log("DIR: ".$dir);
 		global $wp_filesystem;
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
@@ -463,8 +468,26 @@ final class WPMU_Threshold_Alerts {
 		$opts_settings['log_cron']    = ! empty( $in['log_cron'] ) ? 1 : 0;
 		$opts_settings['log_favicon'] = ! empty( $in['log_favicon'] ) ? 1 : 0;
 		$opts_settings['log_ok']      = ! empty( $in['log_ok'] ) ? 1 : 0;
-		self::set_settings( $opts_settings );
-		self::reschedule_cron();
+		$result = self::set_settings( $opts_settings );
+
+		if ( $result === false ) {
+			add_settings_error(
+				self::OPTION_KEY,
+				'wpmu_save_failed',
+				__( 'Error: Settings could not be saved. Check if the log directory is writable at Tab "Check Installation".', 'wp-memory-usage' ),
+				'error' 
+			);
+		} else {
+			add_settings_error(
+				self::OPTION_KEY,
+				'wpmu_save_ok',
+				__( 'Settings saved.', 'wp-memory-usage' ),
+				'success'
+			);
+		}
+
+
+	self::reschedule_cron();
 		return $opts_settings;
 	}
 

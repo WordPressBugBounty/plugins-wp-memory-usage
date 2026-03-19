@@ -4,7 +4,7 @@ Tags: memory, usage, server, php, admin
 Requires at least: 5.3
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,8 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 8. Admin footer – memory usage, PHP version, and IP address on every admin page
 
 == Changelog ==
+= 2.1.1 =
+Improved: Show a warning on save if the log path is not readable and writable, and optimized the loading of translations
 
 = 2.1.0 =
 * New: Diagnose tab generates a ready-made AI prompt (copy & paste into ChatGPT, Claude, etc.) for instant analysis
@@ -137,8 +139,8 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 
 == Upgrade Notice ==
 
-= 2.1.0 =
-New Diagnose tab: get a full PHP/WordPress configuration snapshot and a ready-made AI prompt for instant analysis.
+= 2.1.1 =
+Improved: Show a warning on save if the log path is not readable and writable, and optimized the loading of translations
 
 == Credits ==
 
