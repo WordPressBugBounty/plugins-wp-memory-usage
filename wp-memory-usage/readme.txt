@@ -4,7 +4,7 @@ Tags: memory, usage, server, php, admin
 Requires at least: 5.3
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 2.1.1
+Stable tag: 2.2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,7 +58,7 @@ The Diagnose tab (new in 2.1.0) collects a comprehensive snapshot of your PHP an
 Yes.
 
 = What happens when I delete the plugin? =
-A clean uninstall removes all stored options, scheduled cron jobs, and log files. Nothing is left behind.
+A clean uninstall removes all stored options, scheduled cron jobs, database-tables, and log files. Nothing is left behind.
 
 == Why Use WP-Memory-Usage? ==
 
@@ -79,7 +79,7 @@ Excessive memory usage leads to slower sites, HTTP 500 errors, and failed backgr
 * **Check Installation tab:** verifies log directory, WP-Cron, PHP functions, disk space, and email setup
 * **Admin bar indicator:** quick status badge visible on every admin page
 * **Multisite compatible**
-* **Clean uninstall:** removes all options, cron jobs, and log files on deletion
+* **Clean uninstall:** removes all options, cron jobs, database-tables and log files on deletion
 
 == PluginCheck-Plugin Status ==
 
@@ -97,6 +97,9 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 8. Admin footer – memory usage, PHP version, and IP address on every admin page
 
 == Changelog ==
+= 2.2.0 =
+New: You can now choose whether settings and log files are stored in files (recommended default) or in the WordPress database. If saving to files does not work, you can try the database option.
+
 = 2.1.1 =
 Improved: Show a warning on save if the log path is not readable and writable, and optimized the loading of translations
 
@@ -133,14 +136,10 @@ Improved: Show a warning on save if the log path is not readable and writable, a
 * Bugfix: Fixed "Average MB" calculation that could trigger a PHP Deprecated warning. Thank you @dimalifragis.
 * Tested with WordPress 6.4.3 and 6.5-RC
 
-= 1.2.8 =
-* Fixed: PHP warning when WP_MEMORY_LIMIT or WP_MAX_MEMORY_LIMIT is not defined. Thank you @PowerMan.
-* Improved I18N. Thank you @alexclassroom.
-
 == Upgrade Notice ==
 
-= 2.1.1 =
-Improved: Show a warning on save if the log path is not readable and writable, and optimized the loading of translations
+= 2.2.0 =
+New: You can now choose whether settings and log files are stored in files (recommended default) or in the WordPress database. If saving to files does not work, you can try the database option.
 
 == Credits ==
 
