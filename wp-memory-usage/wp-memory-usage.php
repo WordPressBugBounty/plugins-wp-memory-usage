@@ -4,7 +4,7 @@ Plugin Name: WP-Memory-Usage
 Plugin URI: https://www.json-content-importer.com
 Description: Show up memory limits, current memory usage, IP-Address, PHP-Version in the dashboard and admin footer
 Author: Bernhard Kux
-Version: 2.2.0
+Version: 2.2.1
 Author URI: https://www.json-content-importer.com
 Text Domain: wp-memory-usage
 Domain Path: /languages/

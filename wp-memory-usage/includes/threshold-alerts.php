@@ -1949,21 +1949,68 @@ final class WPMU_Threshold_Alerts {
 				$diag_rows[] = array( 'key' => 'memory_get_peak_usage()',     'value' => self::format_bytes( memory_get_peak_usage( false ) ),           'note' => 'Peak (actually used)' );
 				$diag_rows[] = array( 'key' => 'WP_MEMORY_LIMIT',             'value' => defined( 'WP_MEMORY_LIMIT' ) ? WP_MEMORY_LIMIT : 'n/a',        'note' => 'WordPress memory limit' );
 				$diag_rows[] = array( 'key' => 'WP_MAX_MEMORY_LIMIT',         'value' => defined( 'WP_MAX_MEMORY_LIMIT' ) ? WP_MAX_MEMORY_LIMIT : 'n/a','note' => 'WordPress admin memory limit' );
-				$diag_rows[] = array( 'key' => 'Storage backend',             'value' => self::get_backend() === 'db' ? 'Database (' . self::db_log_table() . ')' : 'File system (' . self::WPMU_LOG_PATH . ')', 'note' => 'Active WPMU storage' );
-				$diag_rows[] = array( 'key' => 'opcache.enable',              'value' => ini_get( 'opcache.enable' ) ? 'On' : 'Off',                    'note' => '' );
-				$diag_rows[] = array( 'key' => 'PHP Version',                 'value' => PHP_VERSION,                                                   'note' => '' );
-				$diag_rows[] = array( 'key' => 'PHP SAPI',                    'value' => PHP_SAPI,                                                       'note' => '' );
-				$diag_rows[] = array( 'key' => 'max_execution_time',          'value' => ini_get( 'max_execution_time' ) . 's',                          'note' => '' );
+				#$diag_rows[] = array( 'key' => 'Storage backend',             'value' => self::get_backend() === 'db' ? 'Database (' . self::db_log_table() . ')' : 'File system (' . self::WPMU_LOG_PATH . ')', 'note' => 'Active WPMU storage' );
+				
+				///////
+				// OPcache
+				$diag_rows[] = array( 'key' => 'opcache.enable',                'value' => ini_get('opcache.enable') ? 'On' : 'Off',                     'note' => '' );
+				$diag_rows[] = array( 'key' => 'opcache.enable_cli',             'value' => ini_get('opcache.enable_cli') ? 'On' : 'Off',                 'note' => '' );
+				$diag_rows[] = array( 'key' => 'opcache.memory_consumption',     'value' => ini_get('opcache.memory_consumption') . ' MB',                'note' => 'Reserved shared memory' );
+				$diag_rows[] = array( 'key' => 'opcache.interned_strings_buffer','value' => ini_get('opcache.interned_strings_buffer') . ' MB',            'note' => 'String buffer' );
+				$diag_rows[] = array( 'key' => 'opcache.max_accelerated_files',  'value' => ini_get('opcache.max_accelerated_files'),                     'note' => 'Max. cached files' );
+				$diag_rows[] = array( 'key' => 'opcache.save_comments',          'value' => ini_get('opcache.save_comments') ? 'On' : 'Off',              'note' => 'Required for annotations' );
+				if ( function_exists('opcache_get_status') ) {
+					$ocs = opcache_get_status(false);
+					if ( is_array($ocs) ) {
+						$diag_rows[] = array( 'key' => 'opcache cached_scripts', 'value' => $ocs['opcache_statistics']['num_cached_scripts'] ?? 'n/a',    'note' => 'Currently cached scripts' );
+						$diag_rows[] = array( 'key' => 'opcache memory_used',    'value' => self::format_bytes( $ocs['memory_usage']['used_memory'] ?? 0 ),'note' => '' );
+						$diag_rows[] = array( 'key' => 'opcache hit_rate',       'value' => round( $ocs['opcache_statistics']['opcache_hit_rate'] ?? 0, 2 ) . ' %', 'note' => '' );
+					}
+				}
+
+				// Garbage Collector
+				$diag_rows[] = array( 'key' => 'zend.enable_gc',    'value' => ini_get('zend.enable_gc') ? 'On' : 'Off', 'note' => 'Cyclic garbage collector' );
+				$diag_rows[] = array( 'key' => 'gc_enabled()',       'value' => gc_enabled() ? 'true' : 'false',           'note' => 'GC active at runtime?' );
+				$diag_rows[] = array( 'key' => 'gc_collect_cycles()','value' => gc_collect_cycles() . ' cycles',           'note' => 'Manually collected' );
+
+				// Extensions
+				foreach ( array('xdebug','blackfire','newrelic','tideways','datadog') as $ext ) {
+					$loaded = extension_loaded($ext);
+					$diag_rows[] = array(
+						'key'   => $ext,
+						'value' => $loaded ? 'loaded' : 'not loaded',
+						'note'  => ( $loaded && $ext === 'xdebug' ) ? 'Increases RAM by 20-30 MB!' : '',
+					);
+				}
+				$diag_rows[] = array( 'key' => 'Loaded extensions', 'value' => count(get_loaded_extensions()), 'note' => 'More extensions = higher base RAM' );
+
+				// General
+				$diag_rows[] = array( 'key' => 'PHP Version',         'value' => PHP_VERSION,                               'note' => '' );
+				$diag_rows[] = array( 'key' => 'PHP SAPI',            'value' => PHP_SAPI,                                  'note' => 'e.g. fpm-fcgi' );
+				$diag_rows[] = array( 'key' => 'realpath_cache_size', 'value' => ini_get('realpath_cache_size'),             'note' => 'File path cache' );
+				$diag_rows[] = array( 'key' => 'realpath_cache_ttl',  'value' => ini_get('realpath_cache_ttl') . 's',        'note' => 'TTL of path cache' );
+				$diag_rows[] = array( 'key' => 'max_execution_time',  'value' => ini_get('max_execution_time') . 's',        'note' => '' );
+				$diag_rows[] = array( 'key' => 'display_errors',      'value' => ini_get('display_errors') ? 'On' : 'Off',  'note' => 'Should be Off on production' );
+				$diag_rows[] = array( 'key' => 'log_errors',          'value' => ini_get('log_errors') ? 'On' : 'Off',       'note' => '' );
+				$diag_rows[] = array( 'key' => 'PHP_INT_SIZE',        'value' => PHP_INT_SIZE . ' Bytes',                   'note' => '8 = 64-bit system' );
+				///////		
+				
 				$prompt_lines   = array();
 				$prompt_lines[] = 'You are a PHP performance expert. Analyze the following PHP/WordPress diagnostic data:';
 				$prompt_lines[] = '';
-				$prompt_lines[] = '1. What stands out negatively?';
-				$prompt_lines[] = '2. Most likely causes of high RAM consumption?';
-				$prompt_lines[] = '3. Concrete optimization recommendations.';
+				$prompt_lines[] = '1. What stands out negatively (memory usage, configuration issues)?';
+				$prompt_lines[] = '2. What are the most likely causes of high RAM consumption?';
+				$prompt_lines[] = '3. Concrete optimization recommendations with exact php.ini settings.';
+				$prompt_lines[] = '4. If two PHP versions are being compared: explain the differences.';
+				$prompt_lines[] = '';
+				$prompt_lines[] = 'Respond in a structured way. Be precise and technical.';
 				$prompt_lines[] = '';
 				$prompt_lines[] = '=== DIAGNOSTIC DATA ===';
-				$prompt_lines[] = 'Date/Time: ' . wp_date( 'Y-m-d H:i:s' );
-				$prompt_lines[] = 'WordPress: ' . get_bloginfo( 'version' );
+				$prompt_lines[] = 'Date/Time:  ' . wp_date( 'Y-m-d H:i:s' );
+				$prompt_lines[] = 'WordPress:  ' . get_bloginfo('version');
+				$prompt_lines[] = 'Site URL:   ' . get_site_url();
+				$prompt_lines[] = '';
+
 				foreach ( $diag_rows as $r ) {
 					$line = $r['key'] . ': ' . $r['value'];
 					if ( ! empty( $r['note'] ) ) { $line .= '  // ' . $r['note']; }

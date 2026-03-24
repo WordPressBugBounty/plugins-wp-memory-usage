@@ -4,7 +4,7 @@ Tags: memory, usage, server, php, admin
 Requires at least: 5.3
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,9 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 8. Admin footer – memory usage, PHP version, and IP address on every admin page
 
 == Changelog ==
+= 2.2.1 =
+Improvement: Under “Diagnostics,” more data is now collected for the AI prompt to help suggest appropriate measures.
+
 = 2.2.0 =
 New: You can now choose whether settings and log files are stored in files (recommended default) or in the WordPress database. If saving to files does not work, you can try the database option.
 
@@ -138,8 +141,8 @@ Improved: Show a warning on save if the log path is not readable and writable, a
 
 == Upgrade Notice ==
 
-= 2.2.0 =
-New: You can now choose whether settings and log files are stored in files (recommended default) or in the WordPress database. If saving to files does not work, you can try the database option.
+= 2.2.1 =
+Improvement: Under “Diagnostics,” more data is now collected for the AI prompt to help suggest appropriate measures.
 
 == Credits ==
 
