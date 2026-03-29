@@ -12,8 +12,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 // -- 1. WordPress Options ------------------------------------------------------
 $wp_memory_usage_options_to_delete = array(
-	'wpmu_threshold_alerts',
-	'wpmu_storage_backend',
+	'wpmu_threshold_alerts',    
 );
 
 foreach ( $wp_memory_usage_options_to_delete as $wp_memory_usage_option ) {
@@ -56,15 +55,9 @@ if ( is_array( $wp_memory_usage_crons ) ) {
 	}
 }
 
-// -- 3. Database Table ---------------------------------------------------------
-global $wpdb;
-// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
-$wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'wpmu_log' );
-// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
-
-// -- 4. Log Files --------------------------------------------------------------
-// settings (settings.cgi) and all log files live in this directory.
-$wp_memory_usage_log_dir = ABSPATH . '../logs/wpmu/';
+// -- 3. Log Files --------------------------------------------------------------
+// Note: settings (settings.cgi) and all log files are stored in the
+// log directory below and are removed together with it.$wp_memory_usage_log_dir = ABSPATH. '../logs/wpmu/';
 if ( $wp_memory_usage_log_dir && is_dir( $wp_memory_usage_log_dir ) ) {
 	// Remove directory
 	global $wp_filesystem;

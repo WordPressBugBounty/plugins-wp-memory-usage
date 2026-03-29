@@ -4,7 +4,7 @@ Plugin Name: WP-Memory-Usage
 Plugin URI: https://www.json-content-importer.com
 Description: Show up memory limits, current memory usage, IP-Address, PHP-Version in the dashboard and admin footer
 Author: Bernhard Kux
-Version: 2.2.1
+Version: 2.0.0
 Author URI: https://www.json-content-importer.com
 Text Domain: wp-memory-usage
 Domain Path: /languages/
@@ -22,17 +22,23 @@ if ( !function_exists( 'add_action' ) ) {
 defined('ABSPATH') OR exit;
 
 // Load translations early for both admin and frontend.
-/*
 function wpmu_load_textdomain() {
    $mofile = plugin_dir_path( __FILE__ ) . 'languages/wp-memory-usage-' . get_locale() . '.mo';
    load_textdomain( 'wp-memory-usage', $mofile );
+	/*
+    error_log( 'wpmu mo-file path: ' . $mofile );
+    error_log( 'wpmu mo-file exists: ' . ( file_exists( $mofile ) ? 'YES' : 'NO' ) );
+    error_log( 'wpmu locale: ' . get_locale() );
+	$mo = new MO();
+	if ( $mo->import_from_file( $mofile) ) {
+		error_log( 'MO loaded OK, entries: ' . count( $mo->entries ) );
+	} else {
+		error_log( 'MO load FAILED' );
+	}   
+	#load_plugin_textdomain( 'wp-memory-usage', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	*/
 }
 add_action( 'plugins_loaded', 'wpmu_load_textdomain', 1 );
-*/
-function wpmu_load_textdomain() {
-    load_plugin_textdomain( 'wp-memory-usage', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-}
-add_action( 'init', 'wpmu_load_textdomain' );
 
 const WPMU_LOG_FILE = "wpmu-log.cgi";
 const WPMU_LOG_PATH = 	ABSPATH. '../logs/wpmu/';
@@ -279,23 +285,19 @@ class wp_memory_usage {
 	}
 
 	// Start this plugin once all other plugins are fully loaded
-
-
-
-if ( file_exists( plugin_dir_path( __FILE__ ) . 'includes/threshold-alerts.php' ) ) { #load WPMU_Threshold_Alerts
-	require_once plugin_dir_path( __FILE__ ) . 'includes/threshold-alerts.php';
-	if ( class_exists( 'WPMU_Threshold_Alerts' ) ) {
-		add_action( 'plugins_loaded', function() {
-			WPMU_Threshold_Alerts::init(25, 100, WPMU_LOG_PATH);
-		}, 2 ); // Priority 2: nach wpmu_load_textdomain (Priority 1)
-	}
-}
-
 if ( is_admin() ) {
     function WP_Memory_Usage_action_plugins_loaded( $array ) { 
 		return new wp_memory_usage();
     }; 
     add_action( 'plugins_loaded', 'WP_Memory_Usage_action_plugins_loaded', 10, 1 ); 	
+}
+
+
+if ( file_exists( plugin_dir_path( __FILE__ ) . 'includes/threshold-alerts.php' ) ) { #load WPMU_Threshold_Alerts
+	require_once plugin_dir_path( __FILE__ ) . 'includes/threshold-alerts.php';
+	if ( class_exists( 'WPMU_Threshold_Alerts' ) ) {
+		WPMU_Threshold_Alerts::init(25, 100, WPMU_LOG_PATH);
+	}
 }
 
 // Add Settings link in Plugins list
