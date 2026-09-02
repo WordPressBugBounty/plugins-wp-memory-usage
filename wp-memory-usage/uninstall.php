@@ -11,45 +11,45 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // -- 1. WordPress Options ------------------------------------------------------
-$wp_memory_usage_options_to_delete = array(
+$wpmu_options_to_delete = array(
 	'wpmu_threshold_alerts',
 	'wpmu_storage_backend',
 );
 
-foreach ( $wp_memory_usage_options_to_delete as $wp_memory_usage_option ) {
-	delete_option( $wp_memory_usage_option );
+foreach ( $wpmu_options_to_delete as $wpmu_option ) {
+	delete_option( $wpmu_option );
 }
 
 // Multisite: remove site-level options if applicable
 if ( is_multisite() ) {
-	foreach ( $wp_memory_usage_options_to_delete as $wp_memory_usage_option ) {
-		delete_site_option( $wp_memory_usage_option );
+	foreach ( $wpmu_options_to_delete as $wpmu_option ) {
+		delete_site_option( $wpmu_option );
 	}
 }
 
 // -- 2. Scheduled Cron Events --------------------------------------------------
-$wp_memory_usage_cron_hooks = array(
+$wpmu_cron_hooks = array(
 	'wpmu_daily_digest',   // DIGEST_HOOK
 	'wpmu_cleanup_hook',   // log-rotation cron
 );
 
-foreach ( $wp_memory_usage_cron_hooks as $wp_memory_usage_hook ) {
-	$wp_memory_usage_timestamp = wp_next_scheduled( $wp_memory_usage_hook );
-	while ( $wp_memory_usage_timestamp ) {
-		wp_unschedule_event( $wp_memory_usage_timestamp, $wp_memory_usage_hook );
-		$wp_memory_usage_timestamp = wp_next_scheduled( $wp_memory_usage_hook );
+foreach ( $wpmu_cron_hooks as $wpmu_hook ) {
+	$wpmu_timestamp = wp_next_scheduled( $wpmu_hook );
+	while ( $wpmu_timestamp ) {
+		wp_unschedule_event( $wpmu_timestamp, $wpmu_hook );
+		$wpmu_timestamp = wp_next_scheduled( $wpmu_hook );
 	}
-	wp_clear_scheduled_hook( $wp_memory_usage_hook ); // safety net
+	wp_clear_scheduled_hook( $wpmu_hook ); // safety net
 }
 
 // Remove any dynamically named interval hooks (wpmu_every_XX_min)
-$wp_memory_usage_crons = _get_cron_array();
-if ( is_array( $wp_memory_usage_crons ) ) {
-	foreach ( $wp_memory_usage_crons as $wp_memory_usage_timestamp => $wp_memory_usage_cron_jobs ) {
-		foreach ( $wp_memory_usage_cron_jobs as $wp_memory_usage_hook_name => $wp_memory_usage_events ) {
-			if ( strpos( $wp_memory_usage_hook_name, 'wpmu_' ) === 0 ) {
-				foreach ( $wp_memory_usage_events as $wp_memory_usage_key => $wp_memory_usage_event ) {
-					wp_unschedule_event( $wp_memory_usage_timestamp, $wp_memory_usage_hook_name, $wp_memory_usage_event['args'] );
+$wpmu_crons = _get_cron_array();
+if ( is_array( $wpmu_crons ) ) {
+	foreach ( $wpmu_crons as $wpmu_timestamp => $wpmu_cron_jobs ) {
+		foreach ( $wpmu_cron_jobs as $wpmu_hook_name => $wpmu_events ) {
+			if ( strpos( $wpmu_hook_name, 'wpmu_' ) === 0 ) {
+				foreach ( $wpmu_events as $wpmu_key => $wpmu_event ) {
+					wp_unschedule_event( $wpmu_timestamp, $wpmu_hook_name, $wpmu_event['args'] );
 				}
 			}
 		}
@@ -64,13 +64,13 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . $wpdb->prefix . 'wpmu_log' );
 
 // -- 4. Log Files --------------------------------------------------------------
 // settings (settings.cgi) and all log files live in this directory.
-$wp_memory_usage_log_dir = ABSPATH . '../logs/wpmu/';
-if ( $wp_memory_usage_log_dir && is_dir( $wp_memory_usage_log_dir ) ) {
+$wpmu_log_dir = ABSPATH . '../logs/wpmu/';
+if ( $wpmu_log_dir && is_dir( $wpmu_log_dir ) ) {
 	// Remove directory
 	global $wp_filesystem;
 	if ( ! function_exists( 'WP_Filesystem' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 	WP_Filesystem();
-	$wp_filesystem->rmdir( $wp_memory_usage_log_dir, true );
+	$wp_filesystem->rmdir( $wpmu_log_dir, true );
 }

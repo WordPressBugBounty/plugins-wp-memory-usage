@@ -4,7 +4,7 @@ Plugin Name: WP-Memory-Usage
 Plugin URI: https://www.json-content-importer.com
 Description: Show up memory limits, current memory usage, IP-Address, PHP-Version in the dashboard and admin footer
 Author: Bernhard Kux
-Version: 2.3.0
+Version: 2.3.1
 Author URI: https://www.json-content-importer.com
 Text Domain: wp-memory-usage
 Domain Path: /languages/
@@ -29,10 +29,10 @@ function wpmu_load_textdomain() {
 }
 add_action( 'plugins_loaded', 'wpmu_load_textdomain', 1 );
 */
-function wpmu_load_textdomain() {
-    load_plugin_textdomain( 'wp-memory-usage', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-}
-add_action( 'init', 'wpmu_load_textdomain' );
+#function wpmu_load_textdomain() {
+    #load_plugin_textdomain( 'wp-memory-usage', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+#}
+#add_action( 'init', 'wpmu_load_textdomain' );
 
 const WPMU_LOG_FILE = "wpmu-log.cgi";
 const WPMU_LOG_PATH = 	ABSPATH. '../logs/wpmu/';
@@ -292,10 +292,10 @@ if ( file_exists( plugin_dir_path( __FILE__ ) . 'includes/threshold-alerts.php' 
 }
 
 if ( is_admin() ) {
-    function WP_Memory_Usage_action_plugins_loaded( $array ) { 
+    function WPMU_action_plugins_loaded( $array ) { 
 		return new wp_memory_usage();
     }; 
-    add_action( 'plugins_loaded', 'WP_Memory_Usage_action_plugins_loaded', 10, 1 ); 	
+    add_action( 'plugins_loaded', 'WPMU_action_plugins_loaded', 10, 1 ); 	
 }
 
 // Add Settings link in Plugins list

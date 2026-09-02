@@ -132,12 +132,24 @@ final class WPMU_Threshold_Alerts {
 	/* --- db implementation --- */
 	private static function get_settings_db() {
 		global $wpdb;
-		$table = esc_sql( self::db_log_table() );
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$row = $wpdb->get_var(
-			"SELECT log_data FROM `{$table}` WHERE log_type = 'settings' AND log_key = 'main' ORDER BY id DESC LIMIT 1"
+			$wpdb->prepare(
+				'SELECT log_data FROM %i WHERE log_type = %s AND log_key = %s ORDER BY id DESC LIMIT 1',
+				self::db_log_table(),
+				'settings',
+				'main'
+			)
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery
+
+		#$table = esc_sql( self::db_log_table() );
+		#// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		#$row = $wpdb->get_var(
+		#	"SELECT log_data FROM `{$table}` WHERE log_type = 'settings' AND log_key = 'main' ORDER BY id DESC LIMIT 1"
+		#);
+		#// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
 		if ( $row ) {
 			$decoded = json_decode( $row, true );
 			if ( is_array( $decoded ) ) {
@@ -189,14 +201,25 @@ final class WPMU_Threshold_Alerts {
 	/* --- db log implementation --- */
 	private static function get_log_db() {
 		global $wpdb;
-		$table = esc_sql( self::db_log_table() );
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$rows = $wpdb->get_col(
-			"SELECT log_data FROM `{$table}` WHERE log_type = 'log' ORDER BY id ASC"
+			$wpdb->prepare(
+				'SELECT log_data FROM %i WHERE log_type = %s ORDER BY id ASC',
+				self::db_log_table(),
+				'log'
+			)
 		);
+		#// phpcs:enable WordPress.DB.DirectDatabaseQuery
+		#$table = esc_sql( self::db_log_table() );
+		#// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		#$rows = $wpdb->get_col(
+		#	"SELECT log_data FROM `{$table}` WHERE log_type = 'log' ORDER BY id ASC"
+		#);
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
 		$result = array();
-		foreach ( $rows as $row ) {
+		foreach ( (array) $rows as $row ) {
+		#foreach ( $rows as $row ) {
 			$decoded = json_decode( $row, true );
 			if ( is_array( $decoded ) ) {
 				$result[] = $decoded;
@@ -336,14 +359,28 @@ final class WPMU_Threshold_Alerts {
 	private static function list_digests_db() {
 		global $wpdb;
 		$table = esc_sql( self::db_log_table() );
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$rows = $wpdb->get_results(
-			"SELECT log_key, created_at FROM `{$table}` WHERE log_type = 'digest' ORDER BY created_at DESC",
+			$wpdb->prepare(
+				'SELECT log_key, created_at FROM %i WHERE log_type = %s ORDER BY created_at DESC',
+				self::db_log_table(),
+				'digest'
+			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery
+
+		#// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		#$rows = $wpdb->get_results(
+		#	"SELECT log_key, created_at FROM `{$table}` WHERE log_type = 'digest' ORDER BY created_at DESC",
+		#	ARRAY_A
+		#);
+		#// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		$format = get_option( 'date_format' ) . ', ' . get_option( 'time_format' );
 		$digest_list = array();
-		foreach ( $rows as $row ) {
+		foreach ( (array) $rows as $row ) {
+		#foreach ( $rows as $row ) {
 			$key   = $row['log_key'];
 			// Try to format from key if it looks like a timestamp slug
 			$raw   = str_replace( array( 'digest_', '.cgibak' ), '', $key );
@@ -364,12 +401,22 @@ final class WPMU_Threshold_Alerts {
 		$table = esc_sql( self::db_log_table() );
 		$ts    = wp_date( 'Y-m-d-H-i-s' );
 
-		// 1) Read all current log rows
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		#// 1) Read all current log rows
+		#// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		#$rows = $wpdb->get_col(
+		#	"SELECT log_data FROM `{$table}` WHERE log_type = 'log' ORDER BY id ASC"
+		#);
+		#// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$rows = $wpdb->get_col(
-			"SELECT log_data FROM `{$table}` WHERE log_type = 'log' ORDER BY id ASC"
+			$wpdb->prepare(
+				'SELECT log_data FROM %i WHERE log_type = %s ORDER BY id ASC',
+				self::db_log_table(),
+				'log'
+			)
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery
 
 		if ( empty( $rows ) ) { return; }
 
@@ -693,20 +740,29 @@ final class WPMU_Threshold_Alerts {
 		if ( empty( $filename ) ) { return NULL; }
 		$dir = self::WPMU_LOG_PATH;
 
-		if ( ! is_dir( $dir ) || ! is_writable( $dir ) ) {
-			return false;
-		}
-
 		global $wp_filesystem;
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 		WP_Filesystem();
-		if ( ! $wp_filesystem->is_dir( $dir ) ) {
-			$wp_filesystem->mkdir( $dir, 0755 );
+
+
+		if ( ! $wp_filesystem->is_dir( $dir ) && ! $wp_filesystem->mkdir( $dir, FS_CHMOD_DIR ) ) {
+			return false;
 		}
+		if ( ! $wp_filesystem->is_writable( $dir ) ) {
+			return false;
+		}
+
+		#if ( ! is_dir( $dir ) || ! is_writable( $dir ) ) {
+		#	return false;
+		#}
+
+		#if ( ! $wp_filesystem->is_dir( $dir ) ) {
+		#	$wp_filesystem->mkdir( $dir, 0755 );
+		#}
 		$file    = $dir . $filename;
-		$optsStr = json_encode( $opts );
+		$optsStr = wp_json_encode( $opts );
 		// phpcs:disable WordPress.WP.AlternativeFunctions
 		$fh = fopen( $file, 'c+' );
 		if ( ! $fh ) return;
@@ -1365,9 +1421,31 @@ final class WPMU_Threshold_Alerts {
 				$gap_warn_danger = $danger_pct - $warn_pct;
 				$gap_danger_crit = $critical_pct - $danger_pct;
 				/* translators: 1: warning threshold percentage, 2: danger threshold percentage, 3: gap in percentage points */
-				if ( $gap_warn_danger < 5 ) { $recs[] = array( 'icon' => '⚠️', 'color' => '#7a5200', 'bg' => '#fef9ec', 'text' => sprintf( __( 'Warning (%d%%) and Danger (%d%%) thresholds are very close together (gap: %d%%). Consider a gap of at least 10%%.', 'wp-memory-usage' ), $warn_pct, $danger_pct, $gap_warn_danger ) ); }
+				if ( $gap_warn_danger < 5 ) { 
+					$recs[] = array( 'icon' => '⚠️', 'color' => '#7a5200', 'bg' => '#fef9ec', 
+					'text' => sprintf( 
+						/* translators: 1: warning threshold in percent, 2: danger threshold in percent, 3: gap between them in percent */
+						__( 'Warning (%1$d%%) and Danger (%2$d%%) thresholds are very close together (gap: %3$d%%). Consider a gap of at least 10%%.', 'wp-memory-usage' ),
+							$warn_pct,
+							$danger_pct,
+							$gap_warn_danger
+						),
+						#__( 'Warning (%d%%) and Danger (%d%%) thresholds are very close together (gap: %d%%). Consider a gap of at least 10%%.', 'wp-memory-usage' ), $warn_pct, $danger_pct, $gap_warn_danger ) 
+					); 
+				}
 				/* translators: 1: danger threshold percentage, 2: critical threshold percentage, 3: gap in percentage points */
-				if ( $gap_danger_crit < 5 )  { $recs[] = array( 'icon' => '⚠️', 'color' => '#7a5200', 'bg' => '#fef9ec', 'text' => sprintf( __( 'Danger (%d%%) and Critical (%d%%) thresholds are very close together (gap: %d%%). Consider a gap of at least 5%%.', 'wp-memory-usage' ), $danger_pct, $critical_pct, $gap_danger_crit ) ); }
+				if ( $gap_danger_crit < 5 )  { 
+					$recs[] = array( 'icon' => '⚠️', 'color' => '#7a5200', 'bg' => '#fef9ec', 
+					'text' => sprintf( 
+						/* translators: 1: danger threshold in percent, 2: critical threshold in percent, 3: gap between them in percent */
+						__( 'Danger (%1$d%%) and Critical (%2$d%%) thresholds are very close together (gap: %3$d%%). Consider a gap of at least 5%%.', 'wp-memory-usage' ),
+						$danger_pct,
+						$critical_pct,
+						$gap_danger_crit
+						#__( 'Danger (%d%%) and Critical (%d%%) thresholds are very close together (gap: %d%%). Consider a gap of at least 5%%.', 'wp-memory-usage' ), $danger_pct, $critical_pct, $gap_danger_crit 
+						) 
+					); 
+				}
 				/* translators: %d: warning threshold percentage */
 				if ( $warn_pct < 50 )         { $recs[] = array( 'icon' => '⚠️', 'color' => '#7a5200', 'bg' => '#fef9ec', 'text' => sprintf( __( 'Warning threshold is very low (%d%%). You will receive many false-positive alerts on normal pages. A value of 65–75%% is typical.', 'wp-memory-usage' ), $warn_pct ) ); }
 				/* translators: %d: critical threshold percentage */
@@ -1375,8 +1453,16 @@ final class WPMU_Threshold_Alerts {
 				/* translators: %d: critical threshold percentage */
 				if ( $critical_pct > 98 )     { $recs[] = array( 'icon' => '⚠️', 'color' => '#7a5200', 'bg' => '#fef9ec', 'text' => sprintf( __( 'Critical threshold is very high (%d%%). At this level you may already be getting OOM errors before the alert fires. 95%% is a safer upper bound.', 'wp-memory-usage' ), $critical_pct ) ); }
 				if ( count( $recs ) === 1 && $recs[0]['icon'] === '✅' ) {
-					/* translators: 1: warning threshold percentage, 2: danger threshold percentage, 3: critical threshold percentage */
-					$recs[] = array( 'icon' => '✅', 'color' => '#2d6a2d', 'bg' => '#f2faf2', 'text' => sprintf( __( 'Threshold settings look good: Warn %d%% / Danger %d%% / Critical %d%%.', 'wp-memory-usage' ), $warn_pct, $danger_pct, $critical_pct ) );
+					$recs[] = array( 'icon' => '✅', 'color' => '#2d6a2d', 'bg' => '#f2faf2', 
+					'text' => sprintf( 
+						/* translators: 1: warning threshold in percent, 2: danger threshold in percent, 3: critical threshold in percent */
+						__( 'Threshold settings look good: Warn %1$d%% / Danger %2$d%% / Critical %3$d%%.', 'wp-memory-usage' ),
+						$warn_pct,
+						$danger_pct,
+						$critical_pct
+						#__( 'Threshold settings look good: Warn %d%% / Danger %d%% / Critical %d%%.', 'wp-memory-usage' ), $warn_pct, $danger_pct, $critical_pct 
+						) 
+					);
 				}
 				?>
 				<p><?php echo esc_html__( 'This tab shows the memory limits that actually apply to your site. Memory issues are often caused by a limit that is lower than expected.', 'wp-memory-usage' ); ?></p>
@@ -1761,9 +1847,12 @@ final class WPMU_Threshold_Alerts {
 					$tbl_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table ) ) === $table;
 					// phpcs:enable WordPress.DB.DirectDatabaseQuery
 					if ( $tbl_exists ) {
-						// phpcs:disable WordPress.DB.DirectDatabaseQuery
-						$row_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-						// phpcs:enable WordPress.DB.DirectDatabaseQuery
+						#// phpcs:disable WordPress.DB.DirectDatabaseQuery
+						#$row_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+						$row_count = (int) $wpdb->get_var(
+							$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table )
+						);						
+						#// phpcs:enable WordPress.DB.DirectDatabaseQuery
 						$checks[] = array( 'status' => 'ok', 'label' => __( 'DB table exists', 'wp-memory-usage' ), 'detail' => $table . ' (' . $row_count . ' rows)', 'hint' => '' );
 					} else {
 						$checks[] = array( 'status' => 'warn', 'label' => __( 'DB table exists', 'wp-memory-usage' ), 'detail' => $table . ' ' . __( 'does not exist yet – will be created on first save', 'wp-memory-usage' ), 'hint' => __( 'Save settings once to create the table.', 'wp-memory-usage' ) );

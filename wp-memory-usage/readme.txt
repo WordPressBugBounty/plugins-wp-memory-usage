@@ -1,10 +1,10 @@
 === WP-Memory-Usage ===
 Contributors: berkux
 Tags: memory, usage, server, php, admin
-Requires at least: 5.3
+Requires at least: 6.2
 Requires PHP: 7.4
-Tested up to: 7.0
-Stable tag: 2.3.0
+Tested up to: 7.1
+Stable tag: 2.3.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,10 @@ Plugin is compatible with PluginCheck-Plugin. Note regarding "trademarked_term":
 8. Admin footer – memory usage, PHP version, and IP address on every admin page
 
 == Changelog ==
+= 2.3.1 =
+* Plugin ok with WordPress 7.1
+* Plugin made compatible with WordPress "Plugin Check (PCP)" version 2.1.0.
+
 = 2.3.0 =
 WordPress-Repository does not update to 2.2.1, tried it with 2.3.0
 
@@ -143,9 +147,9 @@ Improved: Show a warning on save if the log path is not readable and writable, a
 * Tested with WordPress 6.4.3 and 6.5-RC
 
 == Upgrade Notice ==
-
-= 2.3.0 =
-WordPress-Repository does not update to 2.2.1, tried it with 2.3.0
+= 2.3.1 =
+* Plugin ok with WordPress 7.1
+* Plugin made compatible with WordPress "Plugin Check (PCP)" version 2.1.0.
 
 == Credits ==
 
